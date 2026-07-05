@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "cloudinary",
     "cloudinary_storage",
     # Local
+    "config",
     "users",
     "farmers",
     "lands",
