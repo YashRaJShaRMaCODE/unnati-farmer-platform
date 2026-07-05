@@ -31,7 +31,6 @@ export const ROLE_ROUTES: Record<UserRole, string[]> = {
     "/trust-simulator",
     "/loan-eligibility",
     "/village-analytics",
-    "/health-card",
     "/notifications",
     "/ai-assistant",
   ],

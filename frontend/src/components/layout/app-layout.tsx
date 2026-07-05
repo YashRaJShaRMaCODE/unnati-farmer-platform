@@ -64,7 +64,6 @@ const navItems: Record<UserRole, Array<{ href: string; icon: React.ElementType }
     { href: "/trust-score", icon: Shield },
     { href: "/loan-eligibility", icon: CreditCard },
     { href: "/village-analytics", icon: BarChart3 },
-    { href: "/health-card", icon: Heart },
   ],
   admin: [
     { href: "/dashboard", icon: LayoutDashboard },
