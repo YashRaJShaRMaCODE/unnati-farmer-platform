@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bar,
@@ -10,9 +11,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Loader2, RefreshCw, Shield } from "lucide-react";
+import { Loader2, RefreshCw, Shield, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { trustScoreApi } from "@/lib/api";
+import { canAccessRoute } from "@/lib/constants/navigation";
 import { getApiErrorMessage } from "@/lib/utils";
 import { TrustScore } from "@/types";
 import { PageHeader, EmptyState, ErrorState } from "@/components/shared/page-shell";
@@ -276,6 +278,22 @@ export default function TrustScorePage() {
                 ))}
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+      )}
+
+      {user && canAccessRoute(user.role, "/trust-simulator") && (
+        <Card className="border-emerald-100 bg-gradient-to-r from-emerald-50/80 to-lime-50/60">
+          <CardContent className="flex flex-col items-center gap-4 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                <SlidersHorizontal className="h-5 w-5" />
+              </div>
+              <p className="text-sm text-emerald-800">{t("pages.trustScore.simulatorPrompt")}</p>
+            </div>
+            <Button asChild variant="outline" className="shrink-0 border-emerald-200 bg-white hover:bg-emerald-50">
+              <Link href="/trust-simulator">{t("pages.trustScore.openSimulator")}</Link>
+            </Button>
           </CardContent>
         </Card>
       )}

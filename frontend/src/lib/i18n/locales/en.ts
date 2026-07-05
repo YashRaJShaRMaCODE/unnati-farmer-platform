@@ -304,6 +304,8 @@ export const en: TranslationDict = {
       category: "Category",
       lastCalculated: "Last calculated: {datetime}",
       loadFailed: "Failed to load trust score",
+      simulatorPrompt: "Want to simulate how changes would affect your trust score?",
+      openSimulator: "Open Trust Simulator →",
     },
     trustSimulator: {
       title: "Trust Score Simulator",

@@ -304,6 +304,8 @@ export const hi: TranslationDict = {
       category: "श्रेणी",
       lastCalculated: "अंतिम गणना: {datetime}",
       loadFailed: "विश्वास स्कोर लोड करने में विफल",
+      simulatorPrompt: "परिवर्तन से आपका विश्वास स्कोर कैसे बदलेगा, यह देखना चाहते हैं?",
+      openSimulator: "ट्रस्ट सिम्युलेटर खोलें →",
     },
     trustSimulator: {
       title: "विश्वास स्कोर सिम्युलेटर",

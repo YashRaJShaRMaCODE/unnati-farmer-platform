@@ -18,7 +18,6 @@ import {
   BarChart3,
   Search,
   Shield,
-  SlidersHorizontal,
   ShoppingCart,
   Sprout,
   User,
@@ -41,54 +40,43 @@ import { UserRole } from "@/types";
 const navItems: Record<UserRole, Array<{ href: string; icon: React.ElementType }>> = {
   farmer: [
     { href: "/dashboard", icon: LayoutDashboard },
-    { href: "/profile", icon: User },
     { href: "/lands", icon: Map },
     { href: "/crops", icon: Sprout },
     { href: "/marketplace", icon: ShoppingCart },
     { href: "/schemes", icon: Leaf },
     { href: "/complaints", icon: FileText },
     { href: "/trust-score", icon: Shield },
-    { href: "/trust-simulator", icon: SlidersHorizontal },
     { href: "/health-card", icon: Heart },
     { href: "/loan-eligibility", icon: CreditCard },
-    { href: "/notifications", icon: Bell },
   ],
   buyer: [
     { href: "/dashboard", icon: LayoutDashboard },
-    { href: "/profile", icon: User },
     { href: "/marketplace", icon: ShoppingCart },
-    { href: "/notifications", icon: Bell },
   ],
   government: [
     { href: "/dashboard", icon: LayoutDashboard },
     { href: "/schemes", icon: Leaf },
     { href: "/complaints", icon: FileText },
     { href: "/village-analytics", icon: BarChart3 },
-    { href: "/notifications", icon: Bell },
   ],
   bank: [
     { href: "/dashboard", icon: LayoutDashboard },
     { href: "/trust-score", icon: Shield },
-    { href: "/trust-simulator", icon: SlidersHorizontal },
     { href: "/loan-eligibility", icon: CreditCard },
     { href: "/village-analytics", icon: BarChart3 },
     { href: "/health-card", icon: Heart },
-    { href: "/notifications", icon: Bell },
   ],
   admin: [
     { href: "/dashboard", icon: LayoutDashboard },
-    { href: "/profile", icon: User },
     { href: "/lands", icon: Map },
     { href: "/crops", icon: Sprout },
     { href: "/marketplace", icon: ShoppingCart },
     { href: "/schemes", icon: Leaf },
     { href: "/complaints", icon: FileText },
     { href: "/trust-score", icon: Shield },
-    { href: "/trust-simulator", icon: SlidersHorizontal },
     { href: "/health-card", icon: Heart },
     { href: "/village-analytics", icon: BarChart3 },
     { href: "/loan-eligibility", icon: CreditCard },
-    { href: "/notifications", icon: Bell },
   ],
 };
 
@@ -210,7 +198,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             const active =
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href + "/"));
-            const isAiAssistant = item.href === AI_ASSISTANT_LINK.href;
 
             return (
               <Link
@@ -221,13 +208,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all",
                   active
                     ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
-                    : "text-emerald-800 hover:bg-emerald-50",
-                  isAiAssistant &&
-                    !active &&
-                    "border border-dashed border-emerald-200 bg-emerald-50/50 hover:border-emerald-300"
+                    : "text-emerald-800 hover:bg-emerald-50"
                 )}
               >
-                <Icon className={cn("h-4 w-4 shrink-0", isAiAssistant && !active && "text-emerald-600")} />
+                <Icon className="h-4 w-4 shrink-0" />
                 {getNavLabel(locale, item.href)}
               </Link>
             );
