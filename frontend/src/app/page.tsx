@@ -30,9 +30,6 @@ export default function HomePage() {
       <main className="mx-auto max-w-6xl px-6 py-16">
         <section className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="mb-4 text-sm font-medium uppercase tracking-wider text-lime-300">
-              Final Year B.Tech Project
-            </p>
             <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl">
               Farmer Trust, Credit & Transparency Platform
             </h1>
@@ -49,11 +46,6 @@ export default function HomePage() {
               <Link href="/onboarding">
                 <Button size="lg" variant="outline" className="border-lime-300/50 bg-white/10 text-white hover:bg-white/20">
                   Quick Start for Farmers
-                </Button>
-              </Link>
-              <Link href="/project-overview">
-                <Button size="lg" variant="outline" className="border-lime-300/50 bg-white/10 text-white hover:bg-white/20">
-                  Project Overview (Viva)
                 </Button>
               </Link>
             </div>
