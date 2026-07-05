@@ -37,19 +37,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/providers/auth-provider";
-
-const STATUS_OPTIONS = [
-  { value: "active", label: "Active" },
-  { value: "sold", label: "Sold" },
-  { value: "cancelled", label: "Cancelled" },
-];
-
-const SORT_OPTIONS = [
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-];
+import { useTranslation } from "@/providers/language-provider";
 
 export default function MarketplacePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -66,6 +57,17 @@ export default function MarketplacePage() {
 
   const isFarmer = user?.role === "farmer" || user?.role === "admin";
   const isBuyer = user?.role === "buyer" || user?.role === "admin";
+
+  const STATUS_OPTIONS = [
+    { value: "active", label: t("common.active") },
+    { value: "sold", label: t("pages.marketplace.sold") },
+    { value: "cancelled", label: t("pages.marketplace.cancelled") },
+  ];
+
+  const SORT_OPTIONS = [
+    { value: "price_asc", label: t("pages.marketplace.priceLowHigh") },
+    { value: "price_desc", label: t("pages.marketplace.priceHighLow") },
+  ];
 
   const { data: listings, isLoading, isError, refetch } = useQuery({
     queryKey: ["listings", statusFilter],
@@ -176,24 +178,24 @@ export default function MarketplacePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Marketplace"
-        description="Browse crop listings, purchase produce, and manage transactions"
+        title={t("pages.marketplace.title")}
+        description={t("pages.marketplace.description")}
       />
 
       <SearchFilterBar
         search={search}
         onSearchChange={setSearch}
-        placeholder="Search crops, farmers..."
+        placeholder={t("pages.marketplace.searchPlaceholder")}
         filters={
           <>
             <FilterSelect
-              label="All Statuses"
+              label={t("pages.marketplace.allStatuses")}
               value={statusFilter}
               onChange={setStatusFilter}
               options={STATUS_OPTIONS}
             />
             <FilterSelect
-              label="Sort by Price"
+              label={t("pages.marketplace.sortByPrice")}
               value={sortBy}
               onChange={setSortBy}
               options={SORT_OPTIONS}
@@ -210,7 +212,7 @@ export default function MarketplacePage() {
               className="flex w-full items-center justify-between text-left"
               onClick={() => setShowCreateForm(!showCreateForm)}
             >
-              <CardTitle>Create Listing</CardTitle>
+              <CardTitle>{t("pages.marketplace.createListing")}</CardTitle>
               {showCreateForm ? (
                 <ChevronUp className="h-5 w-5 text-emerald-600" />
               ) : (
@@ -222,9 +224,9 @@ export default function MarketplacePage() {
             <CardContent>
               <form onSubmit={handleListingSubmit} className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Crop</Label>
+                  <Label>{t("common.crop")}</Label>
                   <Select name="crop" required>
-                    <option value="">Select crop</option>
+                    <option value="">{t("pages.marketplace.selectCrop")}</option>
                     {(crops || []).map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.crop_name} ({c.season})
@@ -233,19 +235,19 @@ export default function MarketplacePage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Quantity</Label>
+                  <Label>{t("pages.marketplace.quantity")}</Label>
                   <Input name="quantity" type="number" step="0.01" required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Price per Unit (₹)</Label>
+                  <Label>{t("pages.marketplace.pricePerUnit")}</Label>
                   <Input name="price_per_unit" type="number" step="0.01" required />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
-                  <Label>Description</Label>
+                  <Label>{t("common.description")}</Label>
                   <Textarea name="description" />
                 </div>
                 <Button type="submit" className="sm:col-span-2" disabled={createListing.isPending}>
-                  {createListing.isPending ? "Creating..." : "Create Listing"}
+                  {createListing.isPending ? t("common.adding") : t("pages.marketplace.createButton")}
                 </Button>
               </form>
             </CardContent>
@@ -256,16 +258,16 @@ export default function MarketplacePage() {
       {isLoading ? (
         <CardGridSkeleton count={6} />
       ) : isError ? (
-        <ErrorState message="Failed to load listings" onRetry={() => refetch()} />
+        <ErrorState message={t("pages.marketplace.loadFailed")} onRetry={() => refetch()} />
       ) : filteredListings.length === 0 ? (
         <EmptyState
-          title="No listings found"
+          title={t("pages.marketplace.emptyListings")}
           description={
             isFarmer
-              ? "Create your first listing to sell produce on the marketplace."
-              : "No active listings match your search. Check back soon."
+              ? t("pages.marketplace.emptyListingsFarmer")
+              : t("pages.marketplace.emptyListingsBuyer")
           }
-          actionLabel={isFarmer ? "Create Listing" : undefined}
+          actionLabel={isFarmer ? t("pages.marketplace.createListing") : undefined}
           onAction={isFarmer ? () => setShowCreateForm(true) : undefined}
         />
       ) : (
@@ -306,7 +308,7 @@ export default function MarketplacePage() {
                     <p className="text-2xl font-bold text-emerald-700">
                       {formatCurrency(listing.price_per_unit)}
                     </p>
-                    <p className="text-xs text-emerald-600">per unit</p>
+                    <p className="text-xs text-emerald-600">{t("pages.marketplace.perUnit")}</p>
                   </div>
                   <div className="text-right">
                     <p className="flex items-center gap-1 text-sm font-medium text-emerald-950">
@@ -325,11 +327,11 @@ export default function MarketplacePage() {
                     className="flex-1"
                     onClick={() => setDetailListing(listing)}
                   >
-                    <Eye className="h-3.5 w-3.5" /> Details
+                    <Eye className="h-3.5 w-3.5" /> {t("pages.marketplace.details")}
                   </Button>
                   {isBuyer && listing.status === "active" && (
                     <Button size="sm" className="flex-1" onClick={() => openBuyDialog(listing)}>
-                      <ShoppingCart className="h-3.5 w-3.5" /> Buy
+                      <ShoppingCart className="h-3.5 w-3.5" /> {t("pages.marketplace.buy")}
                     </Button>
                   )}
                 </div>
@@ -342,19 +344,19 @@ export default function MarketplacePage() {
       {(transactions || []).length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Transactions</CardTitle>
+            <CardTitle>{t("pages.marketplace.transactions")}</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Crop</TableHead>
-                  <TableHead>Buyer</TableHead>
-                  <TableHead>Farmer</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  {isFarmer && <TableHead>Action</TableHead>}
+                  <TableHead>{t("common.crop")}</TableHead>
+                  <TableHead>{t("pages.marketplace.buyer")}</TableHead>
+                  <TableHead>{t("common.farmer")}</TableHead>
+                  <TableHead>{t("common.amount")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("common.date")}</TableHead>
+                  {isFarmer && <TableHead>{t("common.action")}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -394,20 +396,20 @@ export default function MarketplacePage() {
 
       {isFarmer && farmerTransactions.length === 0 && (transactions || []).length === 0 && (
         <EmptyState
-          title="No transactions yet"
-          description="Transactions will appear here once buyers purchase your listings."
+          title={t("pages.marketplace.emptyTransactions")}
+          description={t("pages.marketplace.emptyTransactionsDesc")}
         />
       )}
 
       <Dialog
         open={!!detailListing}
         onClose={() => setDetailListing(null)}
-        title={detailListing?.crop_name || "Listing Details"}
+        title={detailListing?.crop_name || t("pages.marketplace.listingDetails")}
       >
         {detailListing && (
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-emerald-600">Farmer</span>
+              <span className="text-emerald-600">{t("common.farmer")}</span>
               <span className="font-medium">{detailListing.farmer_email}</span>
             </div>
             <div className="flex justify-between">
@@ -419,7 +421,7 @@ export default function MarketplacePage() {
               <span className="font-medium">{detailListing.quantity} units</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-emerald-600">Status</span>
+              <span className="text-emerald-600">{t("common.status")}</span>
               <Badge variant={detailListing.status === "active" ? "success" : "default"}>
                 {detailListing.status}
               </Badge>
@@ -430,20 +432,20 @@ export default function MarketplacePage() {
             </div>
             {detailListing.description && (
               <div>
-                <p className="text-emerald-600">Description</p>
+                <p className="text-emerald-600">{t("common.description")}</p>
                 <p className="mt-1 text-emerald-900">{detailListing.description}</p>
               </div>
             )}
             {isBuyer && detailListing.status === "active" && (
               <Button className="w-full" onClick={() => { setDetailListing(null); openBuyDialog(detailListing); }}>
-                <ShoppingCart className="h-4 w-4" /> Buy Now
+                <ShoppingCart className="h-4 w-4" /> {t("pages.marketplace.buyNow")}
               </Button>
             )}
           </div>
         )}
       </Dialog>
 
-      <Dialog open={!!buyListing} onClose={() => setBuyListing(null)} title="Purchase Listing">
+      <Dialog open={!!buyListing} onClose={() => setBuyListing(null)} title={t("pages.marketplace.purchaseListing")}>
         {buyListing && (
           <div className="space-y-4">
             <div className="rounded-lg bg-emerald-50 p-3 text-sm">
@@ -453,7 +455,7 @@ export default function MarketplacePage() {
               </p>
             </div>
             <div className="space-y-2">
-              <Label>Quantity</Label>
+              <Label>{t("pages.marketplace.quantity")}</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -478,7 +480,7 @@ export default function MarketplacePage() {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setBuyListing(null)}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 disabled={createTransaction.isPending}

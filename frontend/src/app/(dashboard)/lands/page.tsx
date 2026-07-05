@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useAuth } from "@/providers/auth-provider";
+import { useTranslation } from "@/providers/language-provider";
 
 const SOIL_OPTIONS = [
   { value: "alluvial", label: "Alluvial" },
@@ -56,6 +57,7 @@ function LandForm({
   submitLabel: string;
   pending?: boolean;
 }) {
+  const { t } = useTranslation();
   const [location, setLocation] = useState(defaultValues?.location || "");
 
   return (
@@ -67,11 +69,11 @@ function LandForm({
       className="grid gap-4 sm:grid-cols-2"
     >
       <div className="space-y-2">
-        <Label>Survey Number</Label>
+        <Label>{t("pages.lands.surveyNumber")}</Label>
         <Input name="survey_number" defaultValue={defaultValues?.survey_number} required />
       </div>
       <div className="space-y-2">
-        <Label>Total Area (acres)</Label>
+        <Label>{t("pages.lands.totalAreaAcres")}</Label>
         <Input
           name="total_area"
           type="number"
@@ -81,7 +83,7 @@ function LandForm({
         />
       </div>
       <div className="space-y-2">
-        <Label>Soil Type</Label>
+        <Label>{t("pages.lands.soilType")}</Label>
         <Select name="soil_type" defaultValue={defaultValues?.soil_type || "alluvial"} required>
           {SOIL_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -91,7 +93,7 @@ function LandForm({
         </Select>
       </div>
       <div className="space-y-2">
-        <Label>Irrigation</Label>
+        <Label>{t("pages.lands.irrigation")}</Label>
         <Select
           name="irrigation_type"
           defaultValue={defaultValues?.irrigation_type || "canal"}
@@ -105,7 +107,7 @@ function LandForm({
         </Select>
       </div>
       <div className="space-y-2 sm:col-span-2">
-        <Label>Location</Label>
+        <Label>{t("pages.lands.location")}</Label>
         <div className="flex gap-2">
           <Input
             name="location"
@@ -124,6 +126,7 @@ function LandForm({
 }
 
 export default function LandsPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -222,23 +225,23 @@ export default function LandsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Land Records"
-        description="Manage your land parcels, soil data, and verification status"
+        title={t("pages.lands.title")}
+        description={t("pages.lands.description")}
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard title="Total Records" value={stats.totalRecords} />
-        <StatCard title="Total Area" value={`${stats.totalArea} ac`} />
-        <StatCard title="Verified" value={stats.verifiedCount} />
+        <StatCard title={t("pages.lands.totalRecords")} value={stats.totalRecords} />
+        <StatCard title={t("pages.lands.totalArea")} value={`${stats.totalArea} ac`} />
+        <StatCard title={t("pages.lands.verified")} value={stats.verifiedCount} />
       </div>
 
       <SearchFilterBar
         search={search}
         onSearchChange={setSearch}
-        placeholder="Search by survey number, location..."
+        placeholder={t("pages.lands.searchPlaceholder")}
         filters={
           <FilterSelect
-            label="All Soil Types"
+            label={t("pages.lands.allSoilTypes")}
             value={soilFilter}
             onChange={setSoilFilter}
             options={SOIL_OPTIONS}
@@ -254,7 +257,7 @@ export default function LandsPage() {
               className="flex w-full items-center justify-between text-left"
               onClick={() => setShowAddForm(!showAddForm)}
             >
-              <CardTitle>Add Land Record</CardTitle>
+              <CardTitle>{t("pages.lands.addLand")}</CardTitle>
               {showAddForm ? (
                 <ChevronUp className="h-5 w-5 text-emerald-600" />
               ) : (
@@ -266,7 +269,7 @@ export default function LandsPage() {
             <CardContent>
               <LandForm
                 onSubmit={handleCreate}
-                submitLabel={createMutation.isPending ? "Adding..." : "Add Land"}
+                submitLabel={createMutation.isPending ? t("common.adding") : t("pages.lands.addButton")}
                 pending={createMutation.isPending}
               />
             </CardContent>
@@ -277,16 +280,16 @@ export default function LandsPage() {
       {isLoading ? (
         <CardGridSkeleton count={6} />
       ) : isError ? (
-        <ErrorState message="Failed to load land records" onRetry={() => refetch()} />
+        <ErrorState message={t("pages.lands.loadFailed")} onRetry={() => refetch()} />
       ) : filteredLands.length === 0 ? (
         <EmptyState
-          title="No land records found"
+          title={t("pages.lands.emptyTitle")}
           description={
             isFarmer
-              ? "Add your first land record to start building your farm profile."
-              : "No land records match your search criteria."
+              ? t("pages.lands.emptyDescription")
+              : t("pages.lands.emptyFiltered")
           }
-          actionLabel={isFarmer ? "Add Land" : undefined}
+          actionLabel={isFarmer ? t("pages.lands.addButton") : undefined}
           onAction={isFarmer ? () => setShowAddForm(true) : undefined}
         />
       ) : (
@@ -299,10 +302,10 @@ export default function LandsPage() {
                   <Badge variant={land.is_verified ? "success" : "warning"}>
                     {land.is_verified ? (
                       <span className="flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3" /> Verified
+                        <CheckCircle2 className="h-3 w-3" /> {t("common.verified")}
                       </span>
                     ) : (
-                      "Pending"
+                      t("common.pending")
                     )}
                   </Badge>
                 </div>
@@ -342,7 +345,7 @@ export default function LandsPage() {
                       className="flex-1"
                       onClick={() => setEditLand(land)}
                     >
-                      <Pencil className="h-3.5 w-3.5" /> Edit
+                      <Pencil className="h-3.5 w-3.5" /> {t("common.edit")}
                     </Button>
                     <Button
                       size="sm"
@@ -359,34 +362,33 @@ export default function LandsPage() {
         </div>
       )}
 
-      <Dialog open={!!editLand} onClose={() => setEditLand(null)} title="Edit Land Record">
+      <Dialog open={!!editLand} onClose={() => setEditLand(null)} title={t("pages.lands.editLand")}>
         {editLand && (
           <LandForm
             defaultValues={editLand}
             onSubmit={handleUpdate}
-            submitLabel={updateMutation.isPending ? "Saving..." : "Save Changes"}
+            submitLabel={updateMutation.isPending ? t("common.saving") : t("common.save")}
             pending={updateMutation.isPending}
           />
         )}
       </Dialog>
 
-      <Dialog open={!!deleteLand} onClose={() => setDeleteLand(null)} title="Delete Land Record">
+      <Dialog open={!!deleteLand} onClose={() => setDeleteLand(null)} title={t("pages.lands.deleteLand")}>
         {deleteLand && (
           <div className="space-y-4">
             <p className="text-sm text-emerald-800">
-              Are you sure you want to delete land record{" "}
-              <strong>{deleteLand.survey_number}</strong>? This action cannot be undone.
+              {t("pages.lands.deleteConfirm", { survey: deleteLand.survey_number })}
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setDeleteLand(null)}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 disabled={deleteMutation.isPending}
                 onClick={() => deleteMutation.mutate(deleteLand.id)}
               >
-                {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                {deleteMutation.isPending ? t("common.deleting") : t("common.delete")}
               </Button>
             </div>
           </div>

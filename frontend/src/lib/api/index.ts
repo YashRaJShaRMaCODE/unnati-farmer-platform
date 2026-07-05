@@ -173,14 +173,15 @@ export const dashboardApi = {
 };
 
 export const aiApi = {
-  chat: (message: string, context_type: string) =>
+  chat: (message: string, context_type: string, locale: string = "en") =>
     apiClient.post<{
       available: boolean;
       reply?: string;
       message?: string;
       fallback_tips?: string[];
+      fallback_mode?: boolean;
       context_type?: string;
-    }>("/ai/chat/", { message, context_type }),
+    }>("/ai/chat/", { message, context_type, locale }),
 };
 
 export const insightsApi = {

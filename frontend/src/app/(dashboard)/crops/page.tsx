@@ -28,12 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useAuth } from "@/providers/auth-provider";
-
-const SEASON_OPTIONS = [
-  { value: "kharif", label: "Kharif" },
-  { value: "rabi", label: "Rabi" },
-  { value: "zaid", label: "Zaid" },
-];
+import { useTranslation } from "@/providers/language-provider";
 
 function CropForm({
   defaultValues,
@@ -46,7 +41,14 @@ function CropForm({
   submitLabel: string;
   pending?: boolean;
 }) {
+  const { t } = useTranslation();
   const [cropName, setCropName] = useState(defaultValues?.crop_name || "");
+
+  const SEASON_OPTIONS = [
+    { value: "kharif", label: t("pages.crops.kharif") },
+    { value: "rabi", label: t("pages.crops.rabi") },
+    { value: "zaid", label: t("pages.crops.zaid") },
+  ];
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,7 +65,7 @@ function CropForm({
   return (
     <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-2">
-        <Label>Crop Name</Label>
+        <Label>{t("pages.crops.cropName")}</Label>
         <div className="flex gap-2">
           <Input
             name="crop_name"
@@ -75,7 +77,7 @@ function CropForm({
         </div>
       </div>
       <div className="space-y-2">
-        <Label>Season</Label>
+        <Label>{t("pages.crops.season")}</Label>
         <Select name="season" defaultValue={defaultValues?.season || "kharif"} required>
           {SEASON_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -85,7 +87,7 @@ function CropForm({
         </Select>
       </div>
       <div className="space-y-2">
-        <Label>Area Used (acres)</Label>
+        <Label>{t("pages.crops.areaUsed")}</Label>
         <Input
           name="area_used"
           type="number"
@@ -95,7 +97,7 @@ function CropForm({
         />
       </div>
       <div className="space-y-2">
-        <Label>Yield (quintals)</Label>
+        <Label>{t("pages.crops.yield")}</Label>
         <Input
           name="yield_amount"
           type="number"
@@ -105,7 +107,7 @@ function CropForm({
         />
       </div>
       <div className="space-y-2 sm:col-span-2">
-        <Label>Harvest Date</Label>
+        <Label>{t("pages.crops.harvestDate")}</Label>
         <Input
           name="harvest_date"
           type="date"
@@ -121,6 +123,7 @@ function CropForm({
 }
 
 export default function CropsPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -131,6 +134,12 @@ export default function CropsPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editCrop, setEditCrop] = useState<CropRecord | null>(null);
   const [deleteCrop, setDeleteCrop] = useState<CropRecord | null>(null);
+
+  const SEASON_OPTIONS = [
+    { value: "kharif", label: t("pages.crops.kharif") },
+    { value: "rabi", label: t("pages.crops.rabi") },
+    { value: "zaid", label: t("pages.crops.zaid") },
+  ];
 
   const isFarmer = user?.role === "farmer" || user?.role === "admin";
 
@@ -201,15 +210,15 @@ export default function CropsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Crop Records"
-        description="Track yields, seasons, and harvest data across your farm"
+        title={t("pages.crops.title")}
+        description={t("pages.crops.description")}
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard title="Total Crops" value={filteredCrops.length} icon={Sprout} />
-        <StatCard title="Total Yield" value={`${totalYield.toFixed(1)} q`} />
+        <StatCard title={t("pages.crops.totalCrops")} value={filteredCrops.length} icon={Sprout} />
+        <StatCard title={t("pages.crops.totalYield")} value={`${totalYield.toFixed(1)} q`} />
         <StatCard
-          title="Seasons"
+          title={t("pages.crops.seasons")}
           value={new Set(filteredCrops.map((c) => c.season)).size}
         />
       </div>
@@ -217,7 +226,7 @@ export default function CropsPage() {
       {chartData.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Yield Analytics</CardTitle>
+            <CardTitle className="text-base">{t("pages.crops.yieldAnalytics")}</CardTitle>
           </CardHeader>
           <CardContent className="h-56">
             <ResponsiveContainer width="100%" height="100%">
@@ -241,10 +250,10 @@ export default function CropsPage() {
       <SearchFilterBar
         search={search}
         onSearchChange={setSearch}
-        placeholder="Search crops..."
+        placeholder={t("pages.crops.searchPlaceholder")}
         filters={
           <FilterSelect
-            label="All Seasons"
+            label={t("pages.crops.allSeasons")}
             value={seasonFilter}
             onChange={setSeasonFilter}
             options={SEASON_OPTIONS}
@@ -260,7 +269,7 @@ export default function CropsPage() {
               className="flex w-full items-center justify-between text-left"
               onClick={() => setShowAddForm(!showAddForm)}
             >
-              <CardTitle>Add Crop Record</CardTitle>
+              <CardTitle>{t("pages.crops.addCrop")}</CardTitle>
               {showAddForm ? (
                 <ChevronUp className="h-5 w-5 text-emerald-600" />
               ) : (
@@ -272,7 +281,7 @@ export default function CropsPage() {
             <CardContent>
               <CropForm
                 onSubmit={(data) => createMutation.mutate(data)}
-                submitLabel={createMutation.isPending ? "Adding..." : "Add Crop"}
+                submitLabel={createMutation.isPending ? t("common.adding") : t("pages.crops.addButton")}
                 pending={createMutation.isPending}
               />
             </CardContent>
@@ -283,12 +292,12 @@ export default function CropsPage() {
       {isLoading ? (
         <CardGridSkeleton count={6} />
       ) : isError ? (
-        <ErrorState message="Failed to load crop records" onRetry={() => refetch()} />
+        <ErrorState message={t("pages.crops.loadFailed")} onRetry={() => refetch()} />
       ) : filteredCrops.length === 0 ? (
         <EmptyState
-          title="No crop records found"
-          description="Add crop records to track yields and harvest dates."
-          actionLabel={isFarmer ? "Add Crop" : undefined}
+          title={t("pages.crops.emptyTitle")}
+          description={t("pages.crops.emptyDescription")}
+          actionLabel={isFarmer ? t("pages.crops.addButton") : undefined}
           onAction={isFarmer ? () => setShowAddForm(true) : undefined}
         />
       ) : (
@@ -324,7 +333,7 @@ export default function CropsPage() {
                       className="flex-1"
                       onClick={() => setEditCrop(crop)}
                     >
-                      <Pencil className="h-3.5 w-3.5" /> Edit
+                      <Pencil className="h-3.5 w-3.5" /> {t("common.edit")}
                     </Button>
                     <Button
                       size="sm"
@@ -341,33 +350,33 @@ export default function CropsPage() {
         </div>
       )}
 
-      <Dialog open={!!editCrop} onClose={() => setEditCrop(null)} title="Edit Crop Record">
+      <Dialog open={!!editCrop} onClose={() => setEditCrop(null)} title={t("pages.crops.editCrop")}>
         {editCrop && (
           <CropForm
             defaultValues={editCrop}
             onSubmit={(data) => updateMutation.mutate({ id: editCrop.id, data })}
-            submitLabel={updateMutation.isPending ? "Saving..." : "Save Changes"}
+            submitLabel={updateMutation.isPending ? t("common.saving") : t("common.save")}
             pending={updateMutation.isPending}
           />
         )}
       </Dialog>
 
-      <Dialog open={!!deleteCrop} onClose={() => setDeleteCrop(null)} title="Delete Crop Record">
+      <Dialog open={!!deleteCrop} onClose={() => setDeleteCrop(null)} title={t("pages.crops.deleteCrop")}>
         {deleteCrop && (
           <div className="space-y-4">
             <p className="text-sm text-emerald-800">
-              Delete <strong>{deleteCrop.crop_name}</strong>? This cannot be undone.
+              {t("pages.crops.deleteConfirm", { name: deleteCrop.crop_name })}
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setDeleteCrop(null)}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 disabled={deleteMutation.isPending}
                 onClick={() => deleteMutation.mutate(deleteCrop.id)}
               >
-                {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                {deleteMutation.isPending ? t("common.deleting") : t("common.delete")}
               </Button>
             </div>
           </div>

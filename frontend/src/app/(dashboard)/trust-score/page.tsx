@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/providers/auth-provider";
+import { useTranslation } from "@/providers/language-provider";
 
 const BREAKDOWN_MAX: Record<string, number> = {
   Verification: 20,
@@ -69,17 +70,33 @@ function categoryColor(category: string) {
   }
 }
 
+function translateCategory(category: string, t: (key: string) => string) {
+  switch (category) {
+    case "Excellent":
+      return t("pages.trustScore.excellent");
+    case "Good":
+      return t("pages.trustScore.good");
+    case "Average":
+      return t("pages.trustScore.average");
+    case "High Risk":
+      return t("pages.trustScore.highRisk");
+    default:
+      return category;
+  }
+}
+
 function buildBreakdown(score: TrustScore) {
   return [
-    { name: "Verification", score: score.verification_score, max: 20 },
-    { name: "Transactions", score: score.transaction_score, max: 30 },
-    { name: "Buyer Rating", score: score.buyer_rating_score, max: 20 },
-    { name: "Government", score: score.government_score, max: 15 },
-    { name: "Complaints", score: score.complaint_score, max: 15 },
+    { name: "Verification", labelKey: "pages.trustScore.verification", score: score.verification_score, max: 20 },
+    { name: "Transactions", labelKey: "pages.trustScore.transactions", score: score.transaction_score, max: 30 },
+    { name: "Buyer Rating", labelKey: "pages.trustScore.buyerRating", score: score.buyer_rating_score, max: 20 },
+    { name: "Government", labelKey: "pages.trustScore.government", score: score.government_score, max: 15 },
+    { name: "Complaints", labelKey: "pages.trustScore.complaints", score: score.complaint_score, max: 15 },
   ];
 }
 
 export default function TrustScorePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -105,8 +122,8 @@ export default function TrustScorePage() {
   if (isError) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Trust Score" description="Your credibility rating out of 100" />
-        <ErrorState message="Failed to load trust score" onRetry={() => refetch()} />
+        <PageHeader title={t("pages.trustScore.title")} description={t("pages.trustScore.description")} />
+        <ErrorState message={t("pages.trustScore.loadFailed")} onRetry={() => refetch()} />
       </div>
     );
   }
@@ -114,8 +131,8 @@ export default function TrustScorePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trust Score"
-        description="Your credibility rating out of 100"
+        title={t("pages.trustScore.title")}
+        description={t("pages.trustScore.description")}
         action={
           user?.role === "farmer" ? (
             <Button
@@ -127,7 +144,7 @@ export default function TrustScorePage() {
               ) : (
                 <RefreshCw className="h-4 w-4" />
               )}
-              {recalculate.isPending ? "Recalculating..." : "Recalculate"}
+              {recalculate.isPending ? t("pages.trustScore.recalculating") : t("pages.trustScore.recalculate")}
             </Button>
           ) : undefined
         }
@@ -135,9 +152,9 @@ export default function TrustScorePage() {
 
       {!score ? (
         <EmptyState
-          title="No trust score yet"
-          description="Complete your profile, add land and crop records, and engage on the marketplace to build your trust score."
-          actionLabel={user?.role === "farmer" ? "Recalculate" : undefined}
+          title={t("pages.trustScore.emptyTitle")}
+          description={t("pages.trustScore.emptyDescription")}
+          actionLabel={user?.role === "farmer" ? t("pages.trustScore.recalculate") : undefined}
           onAction={user?.role === "farmer" ? () => recalculate.mutate() : undefined}
         />
       ) : (
@@ -145,25 +162,27 @@ export default function TrustScorePage() {
           <Card className="overflow-hidden">
             <div className={`h-1.5 bg-gradient-to-r ${categoryColor(score.category)}`} />
             <CardContent className="flex flex-col items-center gap-4 py-10">
-              <CircularScore score={score.total_score} size={220} label={score.category} />
+              <CircularScore score={score.total_score} size={220} label={translateCategory(score.category, t)} />
               <Badge variant={categoryBadgeVariant(score.category)} className="text-sm px-4 py-1">
                 <Shield className="mr-1 h-3.5 w-3.5" />
-                {score.category}
+                {translateCategory(score.category, t)}
               </Badge>
               <p className="text-xs text-emerald-600">
-                Last calculated: {new Date(score.calculated_at).toLocaleString("en-IN")}
+                {t("pages.trustScore.lastCalculated", {
+                  datetime: new Date(score.calculated_at).toLocaleString("en-IN"),
+                })}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Score Breakdown</CardTitle>
+              <CardTitle className="text-base">{t("pages.trustScore.scoreBreakdown")}</CardTitle>
             </CardHeader>
             <CardContent className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={breakdown}
+                  data={breakdown.map((row) => ({ ...row, name: t(row.labelKey) }))}
                   layout="vertical"
                   margin={{ top: 4, right: 16, left: 8, bottom: 0 }}
                 >
@@ -190,16 +209,16 @@ export default function TrustScorePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Component Details</CardTitle>
+              <CardTitle className="text-base">{t("pages.trustScore.componentDetails")}</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Component</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead>Max</TableHead>
-                    <TableHead>Progress</TableHead>
+                    <TableHead>{t("pages.trustScore.component")}</TableHead>
+                    <TableHead>{t("pages.trustScore.score")}</TableHead>
+                    <TableHead>{t("pages.trustScore.max")}</TableHead>
+                    <TableHead>{t("pages.trustScore.progress")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -207,7 +226,7 @@ export default function TrustScorePage() {
                     const pct = Math.round((row.score / row.max) * 100);
                     return (
                       <TableRow key={row.name}>
-                        <TableCell>{row.name}</TableCell>
+                        <TableCell>{t(row.labelKey)}</TableCell>
                         <TableCell className="font-semibold">{row.score}</TableCell>
                         <TableCell>{BREAKDOWN_MAX[row.name]}</TableCell>
                         <TableCell>
@@ -234,15 +253,15 @@ export default function TrustScorePage() {
       {(user?.role === "bank" || user?.role === "admin") && scores && scores.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>All Farmers</CardTitle>
+            <CardTitle>{t("pages.trustScore.allFarmers")}</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Farmer</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Category</TableHead>
+                  <TableHead>{t("common.farmer")}</TableHead>
+                  <TableHead>{t("pages.trustScore.score")}</TableHead>
+                  <TableHead>{t("pages.trustScore.category")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -251,7 +270,7 @@ export default function TrustScorePage() {
                     <TableCell>{s.farmer_email}</TableCell>
                     <TableCell className="font-semibold">{s.total_score}</TableCell>
                     <TableCell>
-                      <Badge variant={categoryBadgeVariant(s.category)}>{s.category}</Badge>
+                      <Badge variant={categoryBadgeVariant(s.category)}>{translateCategory(s.category, t)}</Badge>
                     </TableCell>
                   </TableRow>
                 ))}

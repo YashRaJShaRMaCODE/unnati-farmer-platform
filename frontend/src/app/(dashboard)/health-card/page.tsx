@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HealthCard } from "@/types";
+import { useTranslation } from "@/providers/language-provider";
 
 function downloadPdf(card: HealthCard) {
   const doc = new jsPDF();
@@ -65,6 +66,7 @@ function downloadPdf(card: HealthCard) {
 }
 
 export default function HealthCardPage() {
+  const { t } = useTranslation();
   const { data: card, isLoading, isError, refetch } = useQuery({
     queryKey: ["health-card"],
     queryFn: async () => (await healthCardApi.get()).data,
@@ -81,18 +83,18 @@ export default function HealthCardPage() {
   };
 
   if (isLoading) return <PageSkeleton />;
-  if (isError) return <ErrorState message="Failed to load health card" onRetry={() => refetch()} />;
+  if (isError) return <ErrorState message={t("pages.healthCard.loadFailed")} onRetry={() => refetch()} />;
   if (!card) return null;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 animate-fade-in">
       <PageHeader
-        title="Farmer Health Card"
-        description="Your digital identity — trust score, eligibility, and farm summary"
+        title={t("pages.healthCard.title")}
+        description={t("pages.healthCard.description")}
         action={
           <Button onClick={handleDownload} className="gap-2">
             <Download className="h-4 w-4" />
-            Download PDF
+            {t("pages.healthCard.downloadPdf")}
           </Button>
         }
       />
@@ -102,12 +104,12 @@ export default function HealthCardPage() {
       >
         <div className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-lime-600 px-6 py-8 text-white">
           <p className="text-xs font-medium uppercase tracking-widest text-emerald-100">
-            UNNATI Health Card
+            {t("pages.healthCard.cardTitle")}
           </p>
           <h2 className="mt-2 text-2xl font-bold">{card.farmer_name}</h2>
           <p className="mt-1 text-emerald-100">{card.village}</p>
           <div className="mt-3 flex flex-wrap gap-2 text-sm text-emerald-50">
-            <span>{card.phone || "No phone"}</span>
+            <span>{card.phone || t("pages.healthCard.noPhone")}</span>
             <span>·</span>
             <span className="truncate">{card.email}</span>
           </div>
@@ -119,10 +121,10 @@ export default function HealthCardPage() {
             <div className="space-y-2 text-center sm:text-right">
               <TrustScoreBadge score={card.trust_score} category={card.trust_category} size="md" />
               <p className="text-sm text-emerald-700">
-                Profile {card.profile_completion}% complete
+                {t("pages.healthCard.profileComplete", { percent: card.profile_completion })}
               </p>
               <Badge variant={card.loan_risk === "low" ? "success" : "warning"}>
-                {card.loan_risk} loan risk
+                {t("pages.healthCard.loanRisk", { risk: card.loan_risk })}
               </Badge>
             </div>
           </div>
@@ -130,7 +132,7 @@ export default function HealthCardPage() {
           {card.badges.length > 0 && (
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-600">
-                Badges
+                {t("pages.healthCard.badges")}
               </p>
               <BadgeDisplay badges={card.badges} max={8} size="md" />
             </div>
@@ -138,12 +140,12 @@ export default function HealthCardPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              { label: "Loan Eligible", value: formatCurrency(card.loan_eligible_amount) },
-              { label: "Total Revenue", value: formatCurrency(card.revenue) },
-              { label: "Land Area", value: `${card.total_land_area} acres (${card.land_count} records)` },
-              { label: "Crops", value: String(card.crop_count) },
-              { label: "Schemes Applied", value: String(card.schemes_applied) },
-              { label: "Complaints", value: String(card.complaints) },
+              { label: t("pages.healthCard.loanEligible"), value: formatCurrency(card.loan_eligible_amount) },
+              { label: t("pages.healthCard.totalRevenue"), value: formatCurrency(card.revenue) },
+              { label: t("pages.healthCard.landArea"), value: `${card.total_land_area} acres (${card.land_count} records)` },
+              { label: t("pages.healthCard.crops"), value: String(card.crop_count) },
+              { label: t("pages.healthCard.schemesApplied"), value: String(card.schemes_applied) },
+              { label: t("pages.healthCard.complaints"), value: String(card.complaints) },
             ].map((item) => (
               <div
                 key={item.label}
@@ -156,7 +158,7 @@ export default function HealthCardPage() {
           </div>
 
           <p className="text-center text-xs text-emerald-500">
-            Generated {formatDate(card.generated_at)}
+            {t("pages.healthCard.generated", { date: formatDate(card.generated_at) })}
           </p>
         </CardContent>
       </Card>

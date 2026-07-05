@@ -16,10 +16,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/providers/language-provider";
 
 const READ_OPTIONS = [
-  { value: "unread", label: "Unread" },
-  { value: "read", label: "Read" },
+  { value: "unread", labelKey: "pages.notifications.unread" },
+  { value: "read", labelKey: "pages.notifications.read" },
 ];
 
 const TYPE_OPTIONS = [
@@ -47,6 +48,7 @@ function notificationTypeVariant(type: string) {
 }
 
 export default function NotificationsPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [readFilter, setReadFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -92,31 +94,35 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Notifications"
-        description={`${unread} unread notification${unread !== 1 ? "s" : ""}`}
+        title={t("pages.notifications.title")}
+        description={
+          unread === 1
+            ? t("pages.notifications.descriptionOne", { count: unread })
+            : t("pages.notifications.descriptionMany", { count: unread })
+        }
         action={
           unread > 0 ? (
             <Button variant="outline" onClick={() => markAll.mutate()} disabled={markAll.isPending}>
-              {markAll.isPending ? "Marking..." : "Mark All Read"}
+              {markAll.isPending ? t("pages.notifications.marking") : t("pages.notifications.markAllRead")}
             </Button>
           ) : undefined
         }
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <StatCard title="Total" value={filteredNotifications.length} icon={Bell} />
-        <StatCard title="Unread" value={unread} />
+        <StatCard title={t("pages.notifications.total")} value={filteredNotifications.length} icon={Bell} />
+        <StatCard title={t("pages.notifications.unread")} value={unread} />
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <FilterSelect
-          label="All"
+          label={t("common.all")}
           value={readFilter}
           onChange={setReadFilter}
-          options={READ_OPTIONS}
+          options={READ_OPTIONS.map((o) => ({ value: o.value, label: t(o.labelKey) }))}
         />
         <FilterSelect
-          label="All Types"
+          label={t("pages.notifications.allTypes")}
           value={typeFilter}
           onChange={setTypeFilter}
           options={TYPE_OPTIONS}
@@ -126,11 +132,11 @@ export default function NotificationsPage() {
       {isLoading ? (
         <CardGridSkeleton count={4} />
       ) : isError ? (
-        <ErrorState message="Failed to load notifications" onRetry={() => refetch()} />
+        <ErrorState message={t("pages.notifications.loadFailed")} onRetry={() => refetch()} />
       ) : filteredNotifications.length === 0 ? (
         <EmptyState
-          title="No notifications"
-          description="You're all caught up! New notifications will appear here."
+          title={t("pages.notifications.emptyTitle")}
+          description={t("pages.notifications.emptyDescription")}
         />
       ) : (
         <div className="space-y-3">
@@ -161,12 +167,12 @@ export default function NotificationsPage() {
                     <div className="flex items-center gap-2">
                       {n.link && (
                         <span className="flex items-center gap-1 text-xs text-emerald-600">
-                          <ExternalLink className="h-3 w-3" /> View
+                          <ExternalLink className="h-3 w-3" /> {t("pages.notifications.view")}
                         </span>
                       )}
                       {!n.is_read && (
                         <Badge variant="success" className="text-[10px]">
-                          New
+                          {t("pages.notifications.new")}
                         </Badge>
                       )}
                     </div>

@@ -32,100 +32,82 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LanguageToggle } from "@/components/shared/language-toggle";
 import { Breadcrumbs } from "@/components/shared/page-shell";
+import { getNavLabel } from "@/lib/i18n";
+import { useTranslation } from "@/providers/language-provider";
 import { UserRole } from "@/types";
 
-const ROUTE_LABELS: Record<string, string> = {
-  dashboard: "Dashboard",
-  profile: "Profile",
-  lands: "Lands",
-  crops: "Crops",
-  marketplace: "Marketplace",
-  schemes: "Schemes",
-  complaints: "Complaints",
-  "trust-score": "Trust Score",
-  "trust-simulator": "Trust Simulator",
-  "health-card": "Health Card",
-  "village-analytics": "Village Analytics",
-  "loan-eligibility": "Loan Eligibility",
-  notifications: "Notifications",
-  "ai-assistant": "AI Assistant",
-};
-
-const navItems: Record<
-  UserRole,
-  Array<{ href: string; label: string; icon: React.ElementType }>
-> = {
+const navItems: Record<UserRole, Array<{ href: string; icon: React.ElementType }>> = {
   farmer: [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/profile", label: "Profile", icon: User },
-    { href: "/lands", label: "Lands", icon: Map },
-    { href: "/crops", label: "Crops", icon: Sprout },
-    { href: "/marketplace", label: "Marketplace", icon: ShoppingCart },
-    { href: "/schemes", label: "Schemes", icon: Leaf },
-    { href: "/complaints", label: "Complaints", icon: FileText },
-    { href: "/trust-score", label: "Trust Score", icon: Shield },
-    { href: "/trust-simulator", label: "Trust Simulator", icon: SlidersHorizontal },
-    { href: "/health-card", label: "Health Card", icon: Heart },
-    { href: "/loan-eligibility", label: "Loan Eligibility", icon: CreditCard },
-    { href: "/notifications", label: "Notifications", icon: Bell },
+    { href: "/dashboard", icon: LayoutDashboard },
+    { href: "/profile", icon: User },
+    { href: "/lands", icon: Map },
+    { href: "/crops", icon: Sprout },
+    { href: "/marketplace", icon: ShoppingCart },
+    { href: "/schemes", icon: Leaf },
+    { href: "/complaints", icon: FileText },
+    { href: "/trust-score", icon: Shield },
+    { href: "/trust-simulator", icon: SlidersHorizontal },
+    { href: "/health-card", icon: Heart },
+    { href: "/loan-eligibility", icon: CreditCard },
+    { href: "/notifications", icon: Bell },
   ],
   buyer: [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/profile", label: "Profile", icon: User },
-    { href: "/marketplace", label: "Marketplace", icon: ShoppingCart },
-    { href: "/notifications", label: "Notifications", icon: Bell },
+    { href: "/dashboard", icon: LayoutDashboard },
+    { href: "/profile", icon: User },
+    { href: "/marketplace", icon: ShoppingCart },
+    { href: "/notifications", icon: Bell },
   ],
   government: [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/schemes", label: "Schemes", icon: Leaf },
-    { href: "/complaints", label: "Complaints", icon: FileText },
-    { href: "/village-analytics", label: "Village Analytics", icon: BarChart3 },
-    { href: "/notifications", label: "Notifications", icon: Bell },
+    { href: "/dashboard", icon: LayoutDashboard },
+    { href: "/schemes", icon: Leaf },
+    { href: "/complaints", icon: FileText },
+    { href: "/village-analytics", icon: BarChart3 },
+    { href: "/notifications", icon: Bell },
   ],
   bank: [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/trust-score", label: "Trust Scores", icon: Shield },
-    { href: "/trust-simulator", label: "Trust Simulator", icon: SlidersHorizontal },
-    { href: "/loan-eligibility", label: "Loan Eligibility", icon: CreditCard },
-    { href: "/village-analytics", label: "Village Analytics", icon: BarChart3 },
-    { href: "/health-card", label: "Health Card", icon: Heart },
-    { href: "/notifications", label: "Notifications", icon: Bell },
+    { href: "/dashboard", icon: LayoutDashboard },
+    { href: "/trust-score", icon: Shield },
+    { href: "/trust-simulator", icon: SlidersHorizontal },
+    { href: "/loan-eligibility", icon: CreditCard },
+    { href: "/village-analytics", icon: BarChart3 },
+    { href: "/health-card", icon: Heart },
+    { href: "/notifications", icon: Bell },
   ],
   admin: [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/profile", label: "Profile", icon: User },
-    { href: "/lands", label: "Lands", icon: Map },
-    { href: "/crops", label: "Crops", icon: Sprout },
-    { href: "/marketplace", label: "Marketplace", icon: ShoppingCart },
-    { href: "/schemes", label: "Schemes", icon: Leaf },
-    { href: "/complaints", label: "Complaints", icon: FileText },
-    { href: "/trust-score", label: "Trust Score", icon: Shield },
-    { href: "/trust-simulator", label: "Trust Simulator", icon: SlidersHorizontal },
-    { href: "/health-card", label: "Health Card", icon: Heart },
-    { href: "/village-analytics", label: "Village Analytics", icon: BarChart3 },
-    { href: "/loan-eligibility", label: "Loan Eligibility", icon: CreditCard },
-    { href: "/notifications", label: "Notifications", icon: Bell },
+    { href: "/dashboard", icon: LayoutDashboard },
+    { href: "/profile", icon: User },
+    { href: "/lands", icon: Map },
+    { href: "/crops", icon: Sprout },
+    { href: "/marketplace", icon: ShoppingCart },
+    { href: "/schemes", icon: Leaf },
+    { href: "/complaints", icon: FileText },
+    { href: "/trust-score", icon: Shield },
+    { href: "/trust-simulator", icon: SlidersHorizontal },
+    { href: "/health-card", icon: Heart },
+    { href: "/village-analytics", icon: BarChart3 },
+    { href: "/loan-eligibility", icon: CreditCard },
+    { href: "/notifications", icon: Bell },
   ],
 };
 
 const AI_ASSISTANT_LINK = {
   href: "/ai-assistant",
-  label: "AI Assistant",
   icon: Bot,
 };
 
 const SEARCHABLE_ROUTES = ["/marketplace", "/lands", "/crops", "/schemes", "/complaints"];
 
-function buildBreadcrumbs(pathname: string) {
+function buildBreadcrumbs(pathname: string, locale: "en" | "hi") {
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) {
-    return [{ label: "Dashboard", href: "/dashboard" }];
+    return [{ label: getNavLabel(locale, "/dashboard"), href: "/dashboard" }];
   }
 
   return segments.map((segment, index) => {
     const href = "/" + segments.slice(0, index + 1).join("/");
-    const label = ROUTE_LABELS[segment] || segment.replace(/-/g, " ");
+    const label = getNavLabel(locale, href);
     const isLast = index === segments.length - 1;
     return { label, href: isLast ? undefined : href };
   });
@@ -136,12 +118,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, logout } = useAuth();
+  const { locale, t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const roleItems = user ? navItems[user.role] || navItems.farmer : [];
   const sidebarItems = [...roleItems, AI_ASSISTANT_LINK];
-  const breadcrumbs = useMemo(() => buildBreadcrumbs(pathname), [pathname]);
+  const breadcrumbs = useMemo(
+    () => buildBreadcrumbs(pathname, locale),
+    [pathname, locale]
+  );
 
   const { data: notifications = [] } = useQuery({
     queryKey: ["notifications", "header"],
@@ -205,7 +191,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <p className="text-lg font-bold tracking-tight text-emerald-950">UNNATI</p>
-              <p className="text-[11px] font-medium text-emerald-600">Trust & Transparency</p>
+              <p className="text-[11px] font-medium text-emerald-600">{t("layout.tagline")}</p>
             </div>
           </Link>
           <Button
@@ -242,7 +228,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 )}
               >
                 <Icon className={cn("h-4 w-4 shrink-0", isAiAssistant && !active && "text-emerald-600")} />
-                {item.label}
+                {getNavLabel(locale, item.href)}
               </Link>
             );
           })}
@@ -256,7 +242,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </p>
               <p className="truncate text-xs text-emerald-600">{user.email}</p>
               <span className="mt-2 inline-flex rounded-full bg-emerald-200/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800">
-                {user.role}
+                {t(`roles.${user.role}`)}
               </span>
             </div>
           </div>
@@ -282,12 +268,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search crops, schemes, listings..."
+                placeholder={t("layout.searchPlaceholder")}
                 className="h-10 border-emerald-100 bg-emerald-50/40 pl-9 focus-visible:bg-white"
               />
             </form>
 
             <div className="ml-auto flex items-center gap-1 sm:gap-2">
+              <LanguageToggle />
+
               {/* Notifications dropdown */}
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
@@ -307,17 +295,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     className="z-50 w-80 rounded-xl border border-emerald-100 bg-white p-2 shadow-xl animate-in fade-in zoom-in-95"
                   >
                     <div className="flex items-center justify-between px-2 py-1.5">
-                      <p className="text-sm font-semibold text-emerald-950">Notifications</p>
+                      <p className="text-sm font-semibold text-emerald-950">{t("layout.notifications")}</p>
                       {unreadCount > 0 && (
                         <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-                          {unreadCount} unread
+                          {t("layout.unread", { count: unreadCount })}
                         </span>
                       )}
                     </div>
                     <DropdownMenu.Separator className="my-1 h-px bg-emerald-100" />
                     {recentNotifications.length === 0 ? (
                       <p className="px-3 py-6 text-center text-sm text-emerald-600">
-                        No notifications yet
+                        {t("layout.noNotifications")}
                       </p>
                     ) : (
                       recentNotifications.map((n) => (
@@ -341,7 +329,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         href="/notifications"
                         className="flex cursor-pointer items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 outline-none hover:bg-emerald-50 focus:bg-emerald-50"
                       >
-                        View all notifications
+                        {t("layout.viewAllNotifications")}
                         <ChevronRight className="h-4 w-4" />
                       </Link>
                     </DropdownMenu.Item>
@@ -371,7 +359,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       <p className="text-sm font-semibold text-emerald-950">
                         {user?.first_name} {user?.last_name}
                       </p>
-                      <p className="text-xs capitalize text-emerald-600">{user?.role}</p>
+                      <p className="text-xs capitalize text-emerald-600">{t(`roles.${user?.role}`)}</p>
                     </div>
                     {user && canAccessRoute(user.role, "/profile") && (
                       <>
@@ -382,7 +370,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                             className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-emerald-800 outline-none hover:bg-emerald-50 focus:bg-emerald-50"
                           >
                             <User className="h-4 w-4" />
-                            Profile
+                            {t("layout.profile")}
                           </Link>
                         </DropdownMenu.Item>
                       </>
@@ -393,7 +381,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onSelect={handleLogout}
                     >
                       <LogOut className="h-4 w-4" />
-                      Logout
+                      {t("layout.logout")}
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
                 </DropdownMenu.Portal>
@@ -407,7 +395,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
+              placeholder={t("layout.searchPlaceholderMobile")}
               className="h-10 border-emerald-100 bg-emerald-50/40 pl-9"
             />
           </form>

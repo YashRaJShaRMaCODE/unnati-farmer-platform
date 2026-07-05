@@ -16,15 +16,17 @@ import { PageHeader, ErrorState } from "@/components/shared/page-shell";
 import { StatCard } from "@/components/shared/stat-card";
 import { PageSkeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/providers/language-provider";
 
 export default function VillageAnalyticsPage() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["village-analytics"],
     queryFn: async () => (await villageAnalyticsApi.get()).data,
   });
 
   if (isLoading) return <PageSkeleton />;
-  if (isError) return <ErrorState message="Failed to load village analytics" onRetry={() => refetch()} />;
+  if (isError) return <ErrorState message={t("pages.villageAnalytics.loadFailed")} onRetry={() => refetch()} />;
   if (!data) return null;
 
   const chartData = data.villages.map((v) => ({
@@ -39,28 +41,28 @@ export default function VillageAnalyticsPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader
-        title="Village Analytics"
-        description="Regional performance across villages — trust scores, farmers, and activity"
+        title={t("pages.villageAnalytics.title")}
+        description={t("pages.villageAnalytics.description")}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Total Villages"
+          title={t("pages.villageAnalytics.totalVillages")}
           value={data.total_villages}
           icon={MapPin}
         />
         <StatCard
-          title="Total Farmers"
+          title={t("pages.villageAnalytics.totalFarmers")}
           value={data.summary.total_farmers}
           icon={Users}
         />
         <StatCard
-          title="Avg Trust Score"
+          title={t("pages.villageAnalytics.avgTrustScore")}
           value={data.summary.average_trust_score}
-          subtitle="Platform-wide average"
+          subtitle={t("pages.villageAnalytics.platformAverage")}
         />
         <StatCard
-          title="Total Schemes"
+          title={t("pages.villageAnalytics.totalSchemes")}
           value={data.summary.total_schemes}
           subtitle={`${data.summary.total_complaints} complaints`}
         />
@@ -71,7 +73,7 @@ export default function VillageAnalyticsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <Crown className="h-5 w-5 text-amber-600" />
-              Top Performing Village
+              {t("pages.villageAnalytics.topVillage")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -93,7 +95,7 @@ export default function VillageAnalyticsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Average Trust Score by Village</CardTitle>
+          <CardTitle>{t("pages.villageAnalytics.trustByVillage")}</CardTitle>
         </CardHeader>
         <CardContent className="h-96">
           <ResponsiveContainer width="100%" height="100%">
@@ -122,18 +124,18 @@ export default function VillageAnalyticsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Village Summary</CardTitle>
+          <CardTitle>{t("pages.villageAnalytics.villageSummary")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-emerald-100 text-left text-emerald-600">
-                  <th className="pb-2 pr-4 font-medium">Village</th>
-                  <th className="pb-2 pr-4 font-medium">Farmers</th>
-                  <th className="pb-2 pr-4 font-medium">Trust</th>
-                  <th className="pb-2 pr-4 font-medium">Verified</th>
-                  <th className="pb-2 font-medium">Loans</th>
+                  <th className="pb-2 pr-4 font-medium">{t("pages.villageAnalytics.village")}</th>
+                  <th className="pb-2 pr-4 font-medium">{t("pages.villageAnalytics.farmers")}</th>
+                  <th className="pb-2 pr-4 font-medium">{t("pages.villageAnalytics.trust")}</th>
+                  <th className="pb-2 pr-4 font-medium">{t("common.verified")}</th>
+                  <th className="pb-2 font-medium">{t("pages.villageAnalytics.loans")}</th>
                 </tr>
               </thead>
               <tbody>

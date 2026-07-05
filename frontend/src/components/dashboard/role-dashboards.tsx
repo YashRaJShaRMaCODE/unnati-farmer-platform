@@ -48,6 +48,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CircularScore } from "@/components/shared/visual-components";
+import { useTranslation } from "@/providers/language-provider";
+import {
+  translateLoanRecommendation,
+  translateRiskLabel,
+  translateTransactionStatus,
+  translateTrustBreakdownLabel,
+  translateTrustCategory,
+} from "@/lib/i18n/dashboard-helpers";
 
 const CHART_COLORS = [
   "#059669",
@@ -123,6 +131,7 @@ interface BankDashboard {
 }
 
 export function FarmerDashboardView() {
+  const { locale, t } = useTranslation();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dashboard", "farmer"],
     queryFn: async () => (await dashboardApi.farmer()).data,
@@ -136,47 +145,51 @@ export function FarmerDashboardView() {
   useDashboardError(isError, "Could not load farmer dashboard");
 
   if (isLoading) return <PageSkeleton />;
-  if (isError) return <ErrorState message="Failed to load your dashboard." onRetry={() => refetch()} />;
+  if (isError) return <ErrorState message={t("pages.dashboard.loadFailed")} onRetry={() => refetch()} />;
   if (!data) return null;
 
   const chartData = Object.entries(data.trust_score.breakdown).map(([key, value]) => ({
-    name: key.replace(/_score/g, "").replace(/_/g, " "),
+    name: translateTrustBreakdownLabel(locale, key),
     score: value,
   }));
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Farmer Dashboard"
-        description="Your farm overview, trust score, and activity at a glance"
+        title={t("pages.dashboard.farmerTitle")}
+        description={t("pages.dashboard.farmerDescription")}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Trust Score"
+          title={t("pages.dashboard.stats.trustScore")}
           value={data.trust_score.total_score}
-          subtitle={data.trust_score.category}
+          subtitle={translateTrustCategory(locale, data.trust_score.category)}
           href="/trust-score"
           icon={Shield}
         />
         <StatCard
-          title="Loan Eligible"
+          title={t("pages.dashboard.stats.loanEligible")}
           value={formatCurrency(data.loan_eligibility.eligible_amount)}
-          subtitle={`${data.loan_eligibility.risk_category} risk`}
+          subtitle={translateRiskLabel(locale, data.loan_eligibility.risk_category)}
           href="/loan-eligibility"
           icon={CreditCard}
         />
         <StatCard
-          title="Total Land"
-          value={`${data.land_summary.total_area} acres`}
-          subtitle={`${data.land_summary.total_records} records`}
+          title={t("pages.dashboard.stats.totalLand")}
+          value={t("pages.dashboard.acres", { area: data.land_summary.total_area })}
+          subtitle={t("pages.dashboard.statSubtitles.records", {
+            count: data.land_summary.total_records,
+          })}
           href="/lands"
           icon={Map}
         />
         <StatCard
-          title="Unread Alerts"
+          title={t("pages.dashboard.stats.unreadAlerts")}
           value={data.notifications_unread}
-          subtitle={`${data.active_listings} active listings`}
+          subtitle={t("pages.dashboard.statSubtitles.activeListings", {
+            count: data.active_listings,
+          })}
           href="/notifications"
           icon={Bell}
         />
@@ -184,30 +197,32 @@ export function FarmerDashboardView() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Active Crops"
+          title={t("pages.dashboard.stats.activeCrops")}
           value={data.crop_summary.total_crops}
-          subtitle={`${data.crop_summary.total_yield} total yield`}
+          subtitle={t("pages.dashboard.statSubtitles.totalYield", {
+            yield: data.crop_summary.total_yield,
+          })}
           href="/crops"
           icon={Sprout}
         />
         <StatCard
-          title="Marketplace"
+          title={t("pages.dashboard.stats.marketplace")}
           value={data.active_listings}
-          subtitle="Active listings"
+          subtitle={t("pages.dashboard.statSubtitles.activeListingsLabel")}
           href="/marketplace"
           icon={ShoppingCart}
         />
         <StatCard
-          title="Scheme Applications"
+          title={t("pages.dashboard.stats.schemeApplications")}
           value={data.scheme_applications}
-          subtitle="Submitted applications"
+          subtitle={t("pages.dashboard.statSubtitles.submittedApplications")}
           href="/schemes"
           icon={Leaf}
         />
         <StatCard
-          title="Open Complaints"
+          title={t("pages.dashboard.stats.openComplaints")}
           value={data.open_complaints}
-          subtitle="Awaiting resolution"
+          subtitle={t("pages.dashboard.statSubtitles.awaitingResolution")}
           href="/complaints"
           icon={AlertTriangle}
         />
@@ -229,7 +244,7 @@ export function FarmerDashboardView() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Trust Score Breakdown</CardTitle>
+            <CardTitle>{t("pages.dashboard.trustScoreBreakdown")}</CardTitle>
           </CardHeader>
           <CardContent className="h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -239,7 +254,7 @@ export function FarmerDashboardView() {
                 <YAxis domain={[0, 30]} tick={{ fontSize: 11 }} />
                 <Tooltip
                   contentStyle={{ borderRadius: 8, border: "1px solid #d1fae5" }}
-                  formatter={(value) => [value, "Score"]}
+                  formatter={(value) => [value, t("pages.dashboard.score")]}
                 />
                 <Bar dataKey="score" fill="#059669" radius={[6, 6, 0, 0]} />
               </BarChart>
@@ -249,21 +264,24 @@ export function FarmerDashboardView() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Loan Recommendation</CardTitle>
+            <CardTitle>{t("pages.dashboard.loanRecommendation")}</CardTitle>
           </CardHeader>
           <CardContent>
             <Badge variant={data.loan_eligibility.risk_category === "low" ? "success" : "warning"}>
-              {data.loan_eligibility.risk_category} risk
+              {translateRiskLabel(locale, data.loan_eligibility.risk_category)}
             </Badge>
             <p className="mt-4 text-sm leading-relaxed text-emerald-800">
-              {data.loan_eligibility.recommendation ||
-                "Calculate loan eligibility to receive personalized recommendations."}
+              {translateLoanRecommendation(
+                locale,
+                data.loan_eligibility.risk_category,
+                data.loan_eligibility.recommendation
+              )}
             </p>
             <Link
               href="/loan-eligibility"
               className="mt-4 inline-flex text-sm font-medium text-emerald-700 hover:text-emerald-900 hover:underline"
             >
-              View loan eligibility details →
+              {t("pages.dashboard.viewLoanDetails")}
             </Link>
           </CardContent>
         </Card>
@@ -277,7 +295,9 @@ export function FarmerDashboardView() {
         if (schemes.length === 0) return null;
         return (
           <div>
-            <h2 className="mb-4 text-lg font-semibold text-emerald-950">Recommended Schemes</h2>
+            <h2 className="mb-4 text-lg font-semibold text-emerald-950">
+              {t("pages.dashboard.recommendedSchemes")}
+            </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {schemes.map((scheme) => (
                 <Link
@@ -291,11 +311,11 @@ export function FarmerDashboardView() {
                     <CardContent>
                       <p className="line-clamp-2 text-sm text-emerald-700">{scheme.description}</p>
                       <p className="mt-3 text-sm font-semibold text-emerald-600">
-                        Benefit: {formatCurrency(scheme.benefit_amount)}
+                        {t("pages.dashboard.benefit")} {formatCurrency(scheme.benefit_amount)}
                       </p>
                       {"match_score" in scheme && (
                         <p className="mt-1 text-xs text-emerald-500">
-                          Match: {scheme.match_score}%
+                          {t("pages.dashboard.match", { percent: scheme.match_score })}
                         </p>
                       )}
                     </CardContent>
@@ -309,42 +329,42 @@ export function FarmerDashboardView() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle>{t("pages.dashboard.recentActivity")}</CardTitle>
           <Link href="/marketplace" className="text-sm font-medium text-emerald-700 hover:underline">
-            View marketplace
+            {t("pages.dashboard.viewMarketplace")}
           </Link>
         </CardHeader>
         <CardContent>
           {data.recent_transactions.length === 0 ? (
             <EmptyState
-              title="No transactions yet"
-              description="List crops on the marketplace to start selling."
-              actionLabel="Go to Marketplace"
+              title={t("pages.dashboard.noTransactions")}
+              description={t("pages.dashboard.listCropsDesc")}
+              actionLabel={t("pages.dashboard.goToMarketplace")}
               href="/marketplace"
             />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Crop</TableHead>
-                  <TableHead>Buyer</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>{t("common.crop")}</TableHead>
+                  <TableHead>{t("pages.marketplace.buyer")}</TableHead>
+                  <TableHead>{t("common.amount")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("common.date")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.recent_transactions.map((t) => (
-                  <TableRow key={t.id}>
-                    <TableCell className="font-medium">{t.crop}</TableCell>
-                    <TableCell className="max-w-[180px] truncate">{t.buyer}</TableCell>
-                    <TableCell>{formatCurrency(t.amount)}</TableCell>
+                {data.recent_transactions.map((txn) => (
+                  <TableRow key={txn.id}>
+                    <TableCell className="font-medium">{txn.crop}</TableCell>
+                    <TableCell className="max-w-[180px] truncate">{txn.buyer}</TableCell>
+                    <TableCell>{formatCurrency(txn.amount)}</TableCell>
                     <TableCell>
-                      <Badge variant={t.status === "completed" ? "success" : "warning"}>
-                        {t.status}
+                      <Badge variant={txn.status === "completed" ? "success" : "warning"}>
+                        {translateTransactionStatus(locale, txn.status)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{formatDate(t.date)}</TableCell>
+                    <TableCell>{formatDate(txn.date)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -357,6 +377,7 @@ export function FarmerDashboardView() {
 }
 
 export function BuyerDashboardView() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dashboard", "buyer"],
     queryFn: async () => (await dashboardApi.buyer()).data,
@@ -365,14 +386,14 @@ export function BuyerDashboardView() {
   useDashboardError(isError, "Could not load buyer dashboard");
 
   if (isLoading) return <PageSkeleton />;
-  if (isError) return <ErrorState message="Failed to load your dashboard." onRetry={() => refetch()} />;
+  if (isError) return <ErrorState message={t("pages.dashboard.loadFailed")} onRetry={() => refetch()} />;
   if (!data) return null;
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Buyer Dashboard"
-        description="Discover trusted farmers and track your purchases"
+        title={t("pages.dashboard.buyerTitle")}
+        description={t("pages.dashboard.buyerDescription")}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -520,6 +541,7 @@ export function BuyerDashboardView() {
 }
 
 export function AdminDashboardView() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dashboard", "admin"],
     queryFn: async () => (await dashboardApi.admin()).data as unknown as AdminDashboard,
@@ -544,8 +566,8 @@ export function AdminDashboardView() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Admin Dashboard"
-        description="Platform-wide analytics and operational health"
+        title={t("pages.dashboard.adminTitle")}
+        description={t("pages.dashboard.adminDescription")}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -653,6 +675,7 @@ export function AdminDashboardView() {
 }
 
 export function GovernmentDashboardView() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dashboard", "government"],
     queryFn: async () => (await dashboardApi.government()).data as unknown as GovernmentDashboard,
@@ -670,8 +693,8 @@ export function GovernmentDashboardView() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Government Dashboard"
-        description="Scheme applications and complaint oversight"
+        title={t("pages.dashboard.governmentTitle")}
+        description={t("pages.dashboard.governmentDescription")}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -781,6 +804,7 @@ export function GovernmentDashboardView() {
 }
 
 export function BankDashboardView() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dashboard", "bank"],
     queryFn: async () => (await dashboardApi.bank()).data as unknown as BankDashboard,
@@ -802,8 +826,8 @@ export function BankDashboardView() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Bank Dashboard"
-        description="Trust distribution and loan risk analytics"
+        title={t("pages.dashboard.bankTitle")}
+        description={t("pages.dashboard.bankDescription")}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

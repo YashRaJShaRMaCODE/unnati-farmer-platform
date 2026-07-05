@@ -1,26 +1,32 @@
 "use client";
 
 import { Lock, Trophy } from "lucide-react";
+import { translateAchievementTitle } from "@/lib/i18n/dashboard-helpers";
 import { cn } from "@/lib/utils";
 import { Achievement } from "@/types";
+import { useTranslation } from "@/providers/language-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function AchievementGrid({
   achievements,
-  title = "Achievements",
+  title,
 }: {
   achievements: Achievement[];
   title?: string;
 }) {
+  const { locale, t } = useTranslation();
   const unlockedCount = achievements.filter((a) => a.unlocked).length;
 
   return (
     <Card className="animate-fade-in">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">{title}</CardTitle>
+          <CardTitle className="text-base">{title || t("pages.dashboard.achievementsTitle")}</CardTitle>
           <span className="text-xs font-medium text-emerald-600">
-            {unlockedCount}/{achievements.length} unlocked
+            {t("pages.dashboard.unlockedCount", {
+              unlocked: unlockedCount,
+              total: achievements.length,
+            })}
           </span>
         </div>
       </CardHeader>
@@ -57,10 +63,10 @@ export function AchievementGrid({
                     achievement.unlocked ? "text-emerald-950" : "text-emerald-600"
                   )}
                 >
-                  {achievement.title}
+                  {translateAchievementTitle(locale, achievement)}
                 </p>
                 <p className="text-xs text-emerald-500">
-                  {achievement.unlocked ? "Unlocked" : "Locked"}
+                  {achievement.unlocked ? t("pages.dashboard.unlocked") : t("pages.dashboard.locked")}
                 </p>
               </div>
             </div>

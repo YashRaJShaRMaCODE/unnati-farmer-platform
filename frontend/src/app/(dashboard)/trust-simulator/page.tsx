@@ -26,13 +26,14 @@ import { CircularScore } from "@/components/shared/visual-components";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/providers/language-provider";
 
 const SLIDER_CONFIG = [
-  { key: "verification_score" as const, label: "Verification", max: SCORE_MAX.verification },
-  { key: "transaction_score" as const, label: "Transactions", max: SCORE_MAX.transaction },
-  { key: "buyer_rating_score" as const, label: "Buyer Rating", max: SCORE_MAX.buyer_rating },
-  { key: "government_score" as const, label: "Government", max: SCORE_MAX.government },
-  { key: "complaint_score" as const, label: "Complaints", max: SCORE_MAX.complaint },
+  { key: "verification_score" as const, labelKey: "pages.trustScore.verification", max: SCORE_MAX.verification },
+  { key: "transaction_score" as const, labelKey: "pages.trustScore.transactions", max: SCORE_MAX.transaction },
+  { key: "buyer_rating_score" as const, labelKey: "pages.trustScore.buyerRating", max: SCORE_MAX.buyer_rating },
+  { key: "government_score" as const, labelKey: "pages.trustScore.government", max: SCORE_MAX.government },
+  { key: "complaint_score" as const, labelKey: "pages.trustScore.complaints", max: SCORE_MAX.complaint },
 ];
 
 const DEFAULT_SCORES: TrustScoreComponents = {
@@ -56,6 +57,7 @@ function categoryVariant(category: string) {
 }
 
 export default function TrustSimulatorPage() {
+  const { t } = useTranslation();
   const [scores, setScores] = useState<TrustScoreComponents>(DEFAULT_SCORES);
   const [currentScore, setCurrentScore] = useState<{
     total_score: number;
@@ -70,7 +72,7 @@ export default function TrustSimulatorPage() {
     onSuccess: (res) => {
       setCurrentScore(res.data.current);
     },
-    onError: (err) => toast.error(getApiErrorMessage(err, "Simulation failed")),
+    onError: (err) => toast.error(getApiErrorMessage(err, t("pages.trustSimulator.simulationFailed"))),
   });
 
   useEffect(() => {
@@ -78,8 +80,8 @@ export default function TrustSimulatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const comparisonData = SLIDER_CONFIG.map(({ key, label }) => ({
-    name: label,
+  const comparisonData = SLIDER_CONFIG.map(({ key, labelKey }) => ({
+    name: t(labelKey),
     current: currentScore?.breakdown[key] ?? 0,
     simulated: localSimulated[key],
   }));
@@ -91,8 +93,8 @@ export default function TrustSimulatorPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader
-        title="Trust Score Simulator"
-        description="Adjust score components to see how your trust score would change"
+        title={t("pages.trustSimulator.title")}
+        description={t("pages.trustSimulator.description")}
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -100,14 +102,14 @@ export default function TrustSimulatorPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <SlidersHorizontal className="h-4 w-4" />
-              Score Components
+              {t("pages.trustSimulator.scoreComponents")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
-            {SLIDER_CONFIG.map(({ key, label, max }) => (
+            {SLIDER_CONFIG.map(({ key, labelKey, max }) => (
               <div key={key} className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-emerald-900">{label}</span>
+                  <span className="font-medium text-emerald-900">{t(labelKey)}</span>
                   <span className="text-emerald-600">
                     {scores[key]} / {max}
                   </span>
@@ -129,10 +131,10 @@ export default function TrustSimulatorPage() {
             >
               {simulateMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Simulating...
+                  <Loader2 className="h-4 w-4 animate-spin" /> {t("pages.trustSimulator.simulating")}
                 </>
               ) : (
-                "Sync with Server"
+                t("pages.trustSimulator.syncServer")
               )}
             </Button>
           </CardContent>
@@ -142,7 +144,7 @@ export default function TrustSimulatorPage() {
           <Card className="hover-lift">
             <CardHeader className="pb-2">
               <CardTitle className="text-center text-sm text-emerald-600">
-                Current Score
+                {t("pages.trustSimulator.currentScore")}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center pb-6">
@@ -155,7 +157,7 @@ export default function TrustSimulatorPage() {
                 </>
               ) : (
                 <p className="py-8 text-sm text-emerald-600">
-                  No trust score calculated yet
+                  {t("pages.trustSimulator.noScore")}
                 </p>
               )}
             </CardContent>
@@ -164,7 +166,7 @@ export default function TrustSimulatorPage() {
           <Card className="border-emerald-200 bg-emerald-50/30 hover-lift">
             <CardHeader className="pb-2">
               <CardTitle className="text-center text-sm text-emerald-600">
-                Simulated Score
+                {t("pages.trustSimulator.simulatedScore")}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center pb-6">
@@ -188,7 +190,7 @@ export default function TrustSimulatorPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Component Comparison</CardTitle>
+          <CardTitle>{t("pages.trustSimulator.componentComparison")}</CardTitle>
         </CardHeader>
         <CardContent className="h-80">
           <ResponsiveContainer width="100%" height="100%">
@@ -198,8 +200,8 @@ export default function TrustSimulatorPage() {
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #d1fae5" }} />
               <Legend />
-              <Bar dataKey="current" fill="#94a3b8" name="Current" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="simulated" fill="#059669" name="Simulated" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="current" fill="#94a3b8" name={t("pages.trustSimulator.current")} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="simulated" fill="#059669" name={t("pages.trustSimulator.simulated")} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>

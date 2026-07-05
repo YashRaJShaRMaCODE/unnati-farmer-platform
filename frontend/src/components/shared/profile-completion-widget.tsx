@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Circle } from "lucide-react";
+import { translateMilestoneLabel, translateRewardBadge } from "@/lib/i18n/dashboard-helpers";
 import { ProfileCompletion } from "@/types";
 import { BadgeDisplay } from "@/components/shared/badge-display";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/providers/language-provider";
 
 const MILESTONE_ROUTES: Record<string, string> = {
   basic: "/profile",
@@ -26,10 +28,16 @@ export function ProfileCompletionWidget({
 }: {
   data: ProfileCompletion;
 }) {
+  const { locale, t } = useTranslation();
   const href = nextStepHref(data.milestones);
+  const pendingMilestone = data.milestones.find((m) => !m.done);
+  const nextStepLabel = pendingMilestone
+    ? translateMilestoneLabel(locale, pendingMilestone.key)
+    : t("pages.dashboard.profileComplete");
+
   const rewardBadges = data.reward_badges.map((label, i) => ({
     id: `reward-${i}`,
-    label,
+    label: translateRewardBadge(locale, label),
     icon: "award",
     tier: (data.percent >= 80 ? "gold" : data.percent >= 40 ? "silver" : "bronze") as
       | "gold"
@@ -41,7 +49,7 @@ export function ProfileCompletionWidget({
     <Card className="animate-slide-up hover-lift">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-base">Profile Completion</CardTitle>
+          <CardTitle className="text-base">{t("pages.dashboard.profileCompletion")}</CardTitle>
           <span className="text-2xl font-bold text-emerald-700">{data.percent}%</span>
         </div>
       </CardHeader>
@@ -62,7 +70,7 @@ export function ProfileCompletionWidget({
                 <Circle className="h-4 w-4 shrink-0 text-emerald-300" />
               )}
               <span className={m.done ? "text-emerald-800" : "text-emerald-600"}>
-                {m.label}
+                {translateMilestoneLabel(locale, m.key)}
               </span>
             </li>
           ))}
@@ -70,7 +78,9 @@ export function ProfileCompletionWidget({
 
         {rewardBadges.length > 0 && (
           <div>
-            <p className="mb-2 text-xs font-medium text-emerald-600">Reward Badges</p>
+            <p className="mb-2 text-xs font-medium text-emerald-600">
+              {t("pages.dashboard.rewardBadgesTitle")}
+            </p>
             <BadgeDisplay badges={rewardBadges} max={5} />
           </div>
         )}
@@ -78,7 +88,7 @@ export function ProfileCompletionWidget({
         {data.percent < 100 && (
           <Link href={href}>
             <Button variant="outline" className="w-full gap-2">
-              Next: {data.next_step}
+              {t("pages.dashboard.nextStep", { step: nextStepLabel })}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>

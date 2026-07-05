@@ -18,14 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useAuth } from "@/providers/auth-provider";
-
-const STATUS_OPTIONS = [
-  { value: "submitted", label: "Submitted" },
-  { value: "under_review", label: "Under Review" },
-  { value: "investigation", label: "Investigation" },
-  { value: "resolved", label: "Resolved" },
-  { value: "rejected", label: "Rejected" },
-];
+import { useTranslation } from "@/providers/language-provider";
 
 function complaintBadgeVariant(status: string) {
   switch (status) {
@@ -43,8 +36,17 @@ function complaintBadgeVariant(status: string) {
 }
 
 export default function ComplaintsPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+
+  const STATUS_OPTIONS = [
+    { value: "submitted", label: t("common.statusSubmitted") },
+    { value: "under_review", label: t("common.statusUnderReview") },
+    { value: "investigation", label: t("common.statusInvestigation") },
+    { value: "resolved", label: t("common.statusResolved") },
+    { value: "rejected", label: t("common.statusRejected") },
+  ];
   const searchParams = useSearchParams();
   const urlSearch = searchParams.get("search") || "";
 
@@ -81,11 +83,11 @@ export default function ComplaintsPage() {
     mutationFn: (data: FormData) => complaintsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["complaints"] });
-      toast.success("Complaint submitted successfully");
+      toast.success(t("pages.complaints.submitSuccess"));
       setShowCreateForm(false);
       setComplaintTitle("");
     },
-    onError: (err) => toast.error(getApiErrorMessage(err, "Failed to submit complaint")),
+    onError: (err) => toast.error(getApiErrorMessage(err, t("pages.complaints.submitFailed"))),
   });
 
   const reviewMutation = useMutation({
@@ -100,10 +102,10 @@ export default function ComplaintsPage() {
     }) => complaintsApi.update(id, { status, resolution_notes: notes }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["complaints"] });
-      toast.success("Complaint updated");
+      toast.success(t("pages.complaints.updateSuccess"));
       setReviewComplaint(null);
     },
-    onError: (err) => toast.error(getApiErrorMessage(err, "Failed to update complaint")),
+    onError: (err) => toast.error(getApiErrorMessage(err, t("pages.complaints.updateFailed"))),
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,17 +123,17 @@ export default function ComplaintsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Complaints"
-        description="Submit grievances and track resolution progress"
+        title={t("pages.complaints.title")}
+        description={t("pages.complaints.description")}
       />
 
       <SearchFilterBar
         search={search}
         onSearchChange={setSearch}
-        placeholder="Search complaints..."
+        placeholder={t("pages.complaints.searchPlaceholder")}
         filters={
           <FilterSelect
-            label="All Statuses"
+            label={t("common.allStatuses")}
             value={statusFilter}
             onChange={setStatusFilter}
             options={STATUS_OPTIONS}
@@ -147,7 +149,7 @@ export default function ComplaintsPage() {
               className="flex w-full items-center justify-between text-left"
               onClick={() => setShowCreateForm(!showCreateForm)}
             >
-              <CardTitle>Submit Complaint</CardTitle>
+              <CardTitle>{t("pages.complaints.submitComplaint")}</CardTitle>
               {showCreateForm ? (
                 <ChevronUp className="h-5 w-5 text-emerald-600" />
               ) : (
@@ -159,14 +161,14 @@ export default function ComplaintsPage() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>{t("pages.complaints.titleLabel")}</Label>
                   <div className="flex gap-2">
                     <Input
                       name="title"
                       value={complaintTitle}
                       onChange={(e) => setComplaintTitle(e.target.value)}
                       required
-                      placeholder="Brief summary of the issue"
+                      placeholder={t("pages.complaints.titlePlaceholder")}
                     />
                     <VoiceInputButton
                       onTranscript={setComplaintTitle}
@@ -175,15 +177,15 @@ export default function ComplaintsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Textarea name="description" required placeholder="Describe your complaint in detail" />
+                  <Label>{t("pages.complaints.descriptionLabel")}</Label>
+                  <Textarea name="description" required placeholder={t("pages.complaints.descriptionPlaceholder")} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Evidence (optional)</Label>
+                  <Label>{t("pages.complaints.evidence")}</Label>
                   <Input name="evidence" type="file" accept="image/*,.pdf" />
                 </div>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  {createMutation.isPending ? "Submitting..." : "Submit Complaint"}
+                  {createMutation.isPending ? t("common.submitting") : t("pages.complaints.submitComplaint")}
                 </Button>
               </form>
             </CardContent>
@@ -194,16 +196,16 @@ export default function ComplaintsPage() {
       {isLoading ? (
         <CardGridSkeleton count={4} />
       ) : isError ? (
-        <ErrorState message="Failed to load complaints" onRetry={() => refetch()} />
+        <ErrorState message={t("pages.complaints.loadFailed")} onRetry={() => refetch()} />
       ) : filteredComplaints.length === 0 ? (
         <EmptyState
-          title="No complaints found"
+          title={t("pages.complaints.emptyTitle")}
           description={
             isFarmer
-              ? "Submit a complaint if you face any issues with the platform."
-              : "No complaints match your filters."
+              ? t("pages.complaints.emptyDescription")
+              : t("pages.complaints.emptyFiltered")
           }
-          actionLabel={isFarmer ? "Submit Complaint" : undefined}
+          actionLabel={isFarmer ? t("pages.complaints.submitComplaint") : undefined}
           onAction={isFarmer ? () => setShowCreateForm(true) : undefined}
         />
       ) : (
@@ -232,19 +234,19 @@ export default function ComplaintsPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:underline"
                   >
-                    <FileText className="h-3.5 w-3.5" /> View Evidence
+                    <FileText className="h-3.5 w-3.5" /> {t("pages.complaints.viewEvidence")}
                   </a>
                 )}
                 <ComplaintTimeline status={complaint.status} />
                 {complaint.resolution_notes && (
                   <div className="rounded-lg bg-emerald-50 p-3 text-sm">
-                    <p className="font-medium text-emerald-700">Resolution Notes</p>
+                    <p className="font-medium text-emerald-700">{t("pages.complaints.resolutionNotes")}</p>
                     <p className="mt-1 text-emerald-900">{complaint.resolution_notes}</p>
                   </div>
                 )}
                 {isGov && (
                   <Button size="sm" variant="outline" onClick={() => openReview(complaint)}>
-                    Review Complaint
+                    {t("pages.complaints.reviewComplaint")}
                   </Button>
                 )}
               </CardContent>
@@ -256,7 +258,7 @@ export default function ComplaintsPage() {
       <Dialog
         open={!!reviewComplaint}
         onClose={() => setReviewComplaint(null)}
-        title="Review Complaint"
+        title={t("pages.complaints.reviewComplaint")}
       >
         {reviewComplaint && (
           <div className="space-y-4">
@@ -266,26 +268,26 @@ export default function ComplaintsPage() {
             </div>
             <ComplaintTimeline status={reviewComplaint.status} />
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t("common.status")}</Label>
               <Select value={reviewStatus} onChange={(e) => setReviewStatus(e.target.value)}>
-                <option value="submitted">Submitted</option>
-                <option value="under_review">Under Review</option>
-                <option value="investigation">Investigation</option>
-                <option value="resolved">Resolved</option>
-                <option value="rejected">Rejected</option>
+                <option value="submitted">{t("common.statusSubmitted")}</option>
+                <option value="under_review">{t("common.statusUnderReview")}</option>
+                <option value="investigation">{t("common.statusInvestigation")}</option>
+                <option value="resolved">{t("common.statusResolved")}</option>
+                <option value="rejected">{t("common.statusRejected")}</option>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Resolution Notes</Label>
+              <Label>{t("pages.complaints.resolutionNotes")}</Label>
               <Textarea
                 value={resolutionNotes}
                 onChange={(e) => setResolutionNotes(e.target.value)}
-                placeholder="Document findings and resolution steps..."
+                placeholder={t("pages.complaints.resolutionPlaceholder")}
               />
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setReviewComplaint(null)}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 disabled={reviewMutation.isPending}
@@ -297,7 +299,7 @@ export default function ComplaintsPage() {
                   })
                 }
               >
-                {reviewMutation.isPending ? "Saving..." : "Submit Review"}
+                {reviewMutation.isPending ? t("common.submitting") : t("common.submit")}
               </Button>
             </div>
           </div>

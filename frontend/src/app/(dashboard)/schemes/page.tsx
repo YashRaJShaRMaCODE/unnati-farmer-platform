@@ -26,11 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/providers/auth-provider";
-
-const ACTIVE_OPTIONS = [
-  { value: "true", label: "Active Only" },
-  { value: "false", label: "Inactive Only" },
-];
+import { useTranslation } from "@/providers/language-provider";
 
 function applicationBadgeVariant(status: string) {
   switch (status) {
@@ -46,6 +42,7 @@ function applicationBadgeVariant(status: string) {
 }
 
 export default function SchemesPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -57,6 +54,11 @@ export default function SchemesPage() {
   const [reviewApp, setReviewApp] = useState<SchemeApplication | null>(null);
   const [reviewStatus, setReviewStatus] = useState("");
   const [reviewRemarks, setReviewRemarks] = useState("");
+
+  const ACTIVE_OPTIONS = [
+    { value: "true", label: t("pages.schemes.activeOnly") },
+    { value: "false", label: t("pages.schemes.inactiveOnly") },
+  ];
 
   const isGov = user?.role === "government" || user?.role === "admin";
   const isFarmer = user?.role === "farmer" || user?.role === "admin";
@@ -119,26 +121,26 @@ export default function SchemesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Government Schemes"
-        description="Browse agricultural schemes and track your applications"
+        title={t("pages.schemes.title")}
+        description={t("pages.schemes.description")}
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard title="Available Schemes" value={filteredSchemes.length} icon={Leaf} />
+        <StatCard title={t("pages.schemes.availableSchemes")} value={filteredSchemes.length} icon={Leaf} />
         <StatCard
-          title="Active Schemes"
+          title={t("pages.schemes.activeSchemes")}
           value={filteredSchemes.filter((s) => s.is_active).length}
         />
-        <StatCard title="My Applications" value={(applications || []).length} />
+        <StatCard title={t("pages.schemes.myApplications")} value={(applications || []).length} />
       </div>
 
       <SearchFilterBar
         search={search}
         onSearchChange={setSearch}
-        placeholder="Search schemes..."
+        placeholder={t("pages.schemes.searchPlaceholder")}
         filters={
           <FilterSelect
-            label="All Schemes"
+            label={t("pages.schemes.allSchemes")}
             value={activeFilter}
             onChange={setActiveFilter}
             options={ACTIVE_OPTIONS}
@@ -149,11 +151,11 @@ export default function SchemesPage() {
       {isLoading ? (
         <CardGridSkeleton count={4} />
       ) : isError ? (
-        <ErrorState message="Failed to load schemes" onRetry={() => refetch()} />
+        <ErrorState message={t("pages.schemes.loadFailed")} onRetry={() => refetch()} />
       ) : filteredSchemes.length === 0 ? (
         <EmptyState
-          title="No schemes found"
-          description="No government schemes match your search criteria."
+          title={t("pages.schemes.emptySchemes")}
+          description={t("pages.schemes.emptySchemesDesc")}
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -163,20 +165,20 @@ export default function SchemesPage() {
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-base">{scheme.name}</CardTitle>
                   <Badge variant={scheme.is_active ? "success" : "default"}>
-                    {scheme.is_active ? "Active" : "Inactive"}
+                    {scheme.is_active ? t("common.active") : t("common.inactive")}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="line-clamp-2 text-sm text-emerald-800">{scheme.description}</p>
                 <p className="text-sm font-semibold text-emerald-700">
-                  Benefit: {formatCurrency(scheme.benefit_amount)}
+                  {t("pages.schemes.benefit")} {formatCurrency(scheme.benefit_amount)}
                 </p>
                 <p className="text-xs text-emerald-600">
                   {formatDate(scheme.start_date)} – {formatDate(scheme.end_date)}
                 </p>
                 <Button size="sm" variant="outline" onClick={() => setDetailScheme(scheme)}>
-                  <Eye className="h-3.5 w-3.5" /> View Details
+                  <Eye className="h-3.5 w-3.5" /> {t("common.viewDetails")}
                 </Button>
               </CardContent>
             </Card>
@@ -186,27 +188,23 @@ export default function SchemesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Applications</CardTitle>
+          <CardTitle>{t("pages.schemes.applications")}</CardTitle>
         </CardHeader>
         <CardContent>
           {(applications || []).length === 0 ? (
             <EmptyState
-              title="No applications yet"
-              description={
-                isFarmer
-                  ? "Apply to a scheme to track your application status here."
-                  : "No scheme applications to review."
-              }
+              title={t("pages.schemes.emptyApplications")}
+              description={t("pages.schemes.emptyApplicationsDesc")}
             />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Farmer</TableHead>
-                  <TableHead>Scheme</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Applied</TableHead>
-                  {isGov && <TableHead>Action</TableHead>}
+                  <TableHead>{t("common.farmer")}</TableHead>
+                  <TableHead>{t("pages.schemes.scheme")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("pages.schemes.applied")}</TableHead>
+                  {isGov && <TableHead>{t("common.action")}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -223,7 +221,7 @@ export default function SchemesPage() {
                     {isGov && (
                       <TableCell>
                         <Button size="sm" variant="outline" onClick={() => openReview(app)}>
-                          Review
+                          {t("pages.schemes.review")}
                         </Button>
                       </TableCell>
                     )}
@@ -238,25 +236,25 @@ export default function SchemesPage() {
       <Dialog
         open={!!detailScheme}
         onClose={() => setDetailScheme(null)}
-        title={detailScheme?.name || "Scheme Details"}
-      >
+        title={detailScheme?.name || t("pages.schemes.schemeDetails")}
+        >
         {detailScheme && (
           <div className="space-y-4 text-sm">
             <div>
-              <p className="font-medium text-emerald-600">Description</p>
+              <p className="font-medium text-emerald-600">{t("common.description")}</p>
               <p className="mt-1 text-emerald-900">{detailScheme.description}</p>
             </div>
             <div>
-              <p className="font-medium text-emerald-600">Eligibility Criteria</p>
+              <p className="font-medium text-emerald-600">{t("pages.schemes.eligibility")}</p>
               <p className="mt-1 text-emerald-900">{detailScheme.eligibility_criteria}</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <p className="text-emerald-600">Benefit Amount</p>
+                <p className="text-emerald-600">{t("pages.schemes.benefitAmount")}</p>
                 <p className="font-semibold">{formatCurrency(detailScheme.benefit_amount)}</p>
               </div>
               <div>
-                <p className="text-emerald-600">Period</p>
+                <p className="text-emerald-600">{t("pages.schemes.period")}</p>
                 <p>
                   {formatDate(detailScheme.start_date)} – {formatDate(detailScheme.end_date)}
                 </p>
@@ -269,10 +267,10 @@ export default function SchemesPage() {
                 onClick={() => applyMutation.mutate(detailScheme.id)}
               >
                 {hasApplied(detailScheme.id)
-                  ? "Already Applied"
+                  ? t("pages.schemes.alreadyApplied")
                   : applyMutation.isPending
-                    ? "Applying..."
-                    : "Apply Now"}
+                    ? t("common.submitting")
+                    : t("pages.schemes.applyNow")}
               </Button>
             )}
           </div>
@@ -282,7 +280,7 @@ export default function SchemesPage() {
       <Dialog
         open={!!reviewApp}
         onClose={() => setReviewApp(null)}
-        title="Review Application"
+        title={t("pages.schemes.reviewApplication")}
       >
         {reviewApp && (
           <div className="space-y-4">
@@ -291,16 +289,16 @@ export default function SchemesPage() {
               <p className="text-emerald-700">{reviewApp.scheme_name}</p>
             </div>
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t("common.status")}</Label>
               <Select value={reviewStatus} onChange={(e) => setReviewStatus(e.target.value)}>
-                <option value="submitted">Submitted</option>
-                <option value="under_review">Under Review</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
+                <option value="submitted">{t("common.statusSubmitted")}</option>
+                <option value="under_review">{t("common.statusUnderReview")}</option>
+                <option value="approved">{t("common.statusApproved")}</option>
+                <option value="rejected">{t("common.statusRejected")}</option>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Remarks</Label>
+              <Label>{t("pages.schemes.remarks")}</Label>
               <Textarea
                 value={reviewRemarks}
                 onChange={(e) => setReviewRemarks(e.target.value)}
@@ -309,7 +307,7 @@ export default function SchemesPage() {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setReviewApp(null)}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 disabled={reviewMutation.isPending}
@@ -321,7 +319,7 @@ export default function SchemesPage() {
                   })
                 }
               >
-                {reviewMutation.isPending ? "Submitting..." : "Submit Review"}
+                {reviewMutation.isPending ? t("common.submitting") : t("common.submit")}
               </Button>
             </div>
           </div>
