@@ -80,7 +80,6 @@ def check_frontend():
                 capture_output=True,
                 text=True,
                 timeout=300,
-                shell=True,
             )
             add("Frontend production build", result.returncode == 0, 25, "")
         except Exception as e:
