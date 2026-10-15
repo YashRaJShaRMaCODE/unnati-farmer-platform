@@ -1,34 +1,17 @@
 services:
   - type: web
     name: unnati-backend
-    runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    runtime: python
     plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn config.wsgi
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: "False"
-      - key: DATABASE_URL
-        fromDatabase:
-          name: unnati-db
-          property: connectionString
       - key: ALLOWED_HOSTS
-        sync: false
+        value: ".onrender.com"
       - key: CORS_ALLOWED_ORIGINS
         sync: false
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-      - key: CLOUDINARY_API_KEY
-        sync: false
-      - key: CLOUDINARY_API_SECRET
-        sync: false
-      - key: RUN_SEED_DEMO_DATA
-        sync: false
-
-databases:
-  - name: unnati-db
-    plan: free
-    databaseName: unnati
-    user: unnati
