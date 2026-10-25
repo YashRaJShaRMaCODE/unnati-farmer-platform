@@ -7,18 +7,21 @@ from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR.parent / ".env")
 
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-*3a(2(a4xk_em0)2ci+e4_z4o&n822sez9hm(&n()cttn%=%d=",
-)
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+if not SECRET_KEY and DEBUG:
+    SECRET_KEY = "dev-only-insecure-key-change-me"
+if not SECRET_KEY:
+    raise ImproperlyConfigured("Set DJANGO_SECRET_KEY before starting Unnati.")
 
-DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
-
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get(
+    "ALLOWED_HOSTS", "localhost,127.0.0.1"
+).split(",") if host.strip()]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -169,9 +172,9 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
 CORS_ALLOW_CREDENTIALS = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "False").lower() == "true"
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
