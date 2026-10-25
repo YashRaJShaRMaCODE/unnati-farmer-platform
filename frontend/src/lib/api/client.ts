@@ -107,7 +107,7 @@ apiClient.interceptors.response.use(
 
     if (!refresh) {
       clearTokens();
-      if (typeof window !== "undefined") window.location.href = "/login";
+      if (typeof window !== "undefined") window.dispatchEvent(new Event("auth:expired"));
       return Promise.reject(error);
     }
 
@@ -122,7 +122,7 @@ apiClient.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError, null);
       clearTokens();
-      if (typeof window !== "undefined") window.location.href = "/login";
+      if (typeof window !== "undefined") window.dispatchEvent(new Event("auth:expired"));
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

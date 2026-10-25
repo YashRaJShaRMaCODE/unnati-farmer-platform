@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Mic, MicOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,12 @@ declare global {
 
 type LangCode = "hi-IN" | "en-IN";
 
+const subscribeToSpeechSupport = () => () => {};
+const getSpeechSupport = () =>
+  typeof window !== "undefined" &&
+  Boolean(window.webkitSpeechRecognition || window.SpeechRecognition);
+const getServerSpeechSupport = () => false;
+
 export function VoiceInputButton({
   onTranscript,
   className,
@@ -44,7 +50,11 @@ export function VoiceInputButton({
   disabled?: boolean;
 }) {
   const [listening, setListening] = useState(false);
-  const [supported, setSupported] = useState(true);
+  const supported = useSyncExternalStore(
+    subscribeToSpeechSupport,
+    getSpeechSupport,
+    getServerSpeechSupport
+  );
   const [lang, setLang] = useState<LangCode>("hi-IN");
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
 
@@ -53,10 +63,7 @@ export function VoiceInputButton({
       typeof window !== "undefined"
         ? window.webkitSpeechRecognition || window.SpeechRecognition
         : undefined;
-    if (!SpeechRecognitionCtor) {
-      setSupported(false);
-      return;
-    }
+    if (!SpeechRecognitionCtor) return;
 
     const recognition = new SpeechRecognitionCtor();
     recognition.continuous = false;

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
 import { getStoredUser } from "@/lib/api/client";
 import { User } from "@/types";
@@ -17,6 +18,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -30,15 +32,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const stored = getStoredUser<User>();
-    if (stored) setUser(stored);
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      refreshUser().finally(() => setLoading(false));
-    } else {
+    const handleAuthExpired = () => {
+      setUser(null);
+      router.replace("/login");
+    };
+    window.addEventListener("auth:expired", handleAuthExpired);
+    const initialize = async () => {
+      if (localStorage.getItem("access_token")) await refreshUser();
       setLoading(false);
-    }
-  }, [refreshUser]);
+    };
+    void initialize();
+    return () => window.removeEventListener("auth:expired", handleAuthExpired);
+  }, [refreshUser, router]);
 
   const login = async (email: string, password: string) => {
     await authApi.login(email, password);

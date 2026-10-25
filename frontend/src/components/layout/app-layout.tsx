@@ -23,7 +23,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { notificationsApi } from "@/lib/api";
 import { canAccessRoute } from "@/lib/constants/navigation";
@@ -107,7 +107,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const { locale, t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchDraft, setSearchDraft] = useState<{ key: string; value: string } | null>(null);
+  const searchKey = `${pathname}?${searchParams.toString()}`;
+  const routeSearch = SEARCHABLE_ROUTES.some((route) => pathname.startsWith(route))
+    ? searchParams.get("search") || ""
+    : "";
+  const searchQuery = searchDraft?.key === searchKey ? searchDraft.value : routeSearch;
 
   const roleItems = user ? navItems[user.role] || navItems.farmer : [];
   const sidebarItems = [...roleItems, AI_ASSISTANT_LINK];
@@ -125,15 +130,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const recentNotifications = notifications.slice(0, 5);
   const unreadCount = notifications.filter((n) => !n.is_read).length;
-
-  useEffect(() => {
-    const param = searchParams.get("search") || "";
-    if (SEARCHABLE_ROUTES.some((route) => pathname.startsWith(route))) {
-      setSearchQuery(param);
-    } else {
-      setSearchQuery("");
-    }
-  }, [pathname, searchParams]);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -250,7 +246,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-500" />
               <Input
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchDraft({ key: searchKey, value: e.target.value })}
                 placeholder={t("layout.searchPlaceholder")}
                 className="h-10 border-emerald-100 bg-emerald-50/40 pl-9 focus-visible:bg-white"
               />
@@ -377,7 +373,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <Search className="absolute left-7 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-500" />
             <Input
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchDraft({ key: searchKey, value: e.target.value })}
               placeholder={t("layout.searchPlaceholderMobile")}
               className="h-10 border-emerald-100 bg-emerald-50/40 pl-9"
             />

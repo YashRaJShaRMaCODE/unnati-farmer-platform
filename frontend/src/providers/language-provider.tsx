@@ -6,7 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
 } from "react";
 import { translate, type Locale } from "@/lib/i18n";
 
@@ -27,28 +27,34 @@ function readStoredLocale(): Locale {
   return stored === "hi" ? "hi" : "en";
 }
 
+function getServerLocale(): Locale {
+  return "en";
+}
+
+function subscribeToLocale(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener("unnati-locale-change", onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener("unnati-locale-change", onChange);
+  };
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
-  const [ready, setReady] = useState(false);
+  const locale = useSyncExternalStore(subscribeToLocale, readStoredLocale, getServerLocale);
 
   useEffect(() => {
-    setLocaleState(readStoredLocale());
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
     document.documentElement.lang = locale;
-    localStorage.setItem(STORAGE_KEY, locale);
-  }, [locale, ready]);
+  }, [locale]);
 
   const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
+    localStorage.setItem(STORAGE_KEY, next);
+    window.dispatchEvent(new Event("unnati-locale-change"));
   }, []);
 
   const toggleLocale = useCallback(() => {
-    setLocaleState((current) => (current === "en" ? "hi" : "en"));
-  }, []);
+    setLocale(locale === "en" ? "hi" : "en");
+  }, [locale, setLocale]);
 
   const t = useCallback(
     (key: string, vars?: Record<string, string | number>) => translate(locale, key, vars),
