@@ -1,73 +1,84 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowRight, Shield, Sprout, TrendingUp } from "lucide-react";
+import { ArrowRight, Landmark, ShieldCheck, Sprout, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LanguageToggle } from "@/components/shared/language-toggle";
+import { useLanguage } from "@/providers/language-provider";
 
 export default function HomePage() {
+  const { t } = useLanguage();
+  const tools = [
+    { icon: Sprout, title: t("landing.recordsTitle"), description: t("landing.recordsBody") },
+    { icon: ShieldCheck, title: t("landing.trustTitle"), description: t("landing.trustBody") },
+    { icon: Landmark, title: t("landing.financeTitle"), description: t("landing.financeBody") },
+    { icon: Store, title: t("landing.marketTitle"), description: t("landing.marketBody") },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-emerald-800 to-lime-900 text-white">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-            <Sprout className="h-6 w-6" />
-          </div>
-          <span className="text-2xl font-bold">UNNATI</span>
-        </div>
-        <div className="flex gap-3">
-          <Link href="/login">
-            <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10">
-              Login
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button className="bg-lime-400 text-emerald-950 hover:bg-lime-300">
-              Get Started
-            </Button>
-          </Link>
+    <div className="landing-page">
+      <header className="landing-header" id="top">
+        <Link className="landing-brand" href="/" aria-label="UNNATI home">
+          <span className="brand-symbol" aria-hidden="true"><Sprout size={19} /></span>
+          <span>UNNATI<small>{t("layout.tagline")}</small></span>
+        </Link>
+        <div className="landing-header-actions">
+          <LanguageToggle />
+          <Link className="landing-login" href="/login">{t("landing.login")}</Link>
+          <Link href="/register"><Button className="landing-signup">{t("landing.register")}</Button></Link>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-16">
-        <section className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <div>
-            <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl">
-              Farmer Trust, Credit & Transparency Platform
-            </h1>
-            <p className="mb-8 text-lg text-emerald-100">
-              Empower farmers with verified trust scores, loan eligibility insights,
-              transparent marketplace transactions, and government scheme access.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/register">
-                <Button size="lg" className="bg-lime-400 text-emerald-950 hover:bg-lime-300">
-                  Join UNNATI <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/onboarding">
-                <Button size="lg" variant="outline" className="border-lime-300/50 bg-white/10 text-white hover:bg-white/20">
-                  Quick Start for Farmers
-                </Button>
-              </Link>
+      <main>
+        <section className="landing-hero" aria-labelledby="landing-title">
+          <div className="landing-hero-copy">
+            <p className="landing-eyebrow"><span aria-hidden="true" />{t("landing.eyebrow")}</p>
+            <h1 id="landing-title">{t("landing.headline")} <em>{t("landing.headlineAccent")}</em></h1>
+            <p className="landing-lede">{t("landing.intro")}</p>
+            <div className="landing-actions">
+              <Link href="/onboarding"><Button size="lg" className="landing-primary">{t("landing.start")}<ArrowRight size={16} /></Button></Link>
+              <Link className="landing-secondary" href="/register">{t("landing.createAccount")}<span aria-hidden="true">↗</span></Link>
             </div>
+            <p className="landing-note"><ShieldCheck size={15} aria-hidden="true" />{t("landing.note")}</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {[
-              { icon: Shield, title: "Trust Score", desc: "100-point verification & performance score" },
-              { icon: TrendingUp, title: "Loan Eligibility", desc: "AI-driven credit assessment for banks" },
-              { icon: Sprout, title: "Marketplace", desc: "Direct farmer-to-buyer crop trading" },
-              { icon: Shield, title: "Transparency", desc: "Complaints, schemes & audit trails" },
-            ].map((item) => (
-              <Card key={item.title} className="border-white/10 bg-white/10 text-white backdrop-blur">
-                <CardHeader>
-                  <item.icon className="h-8 w-8 text-lime-300" />
-                  <CardTitle className="text-white">{item.title}</CardTitle>
-                  <CardDescription className="text-emerald-100">{item.desc}</CardDescription>
-                </CardHeader>
-              </Card>
+
+          <div className="field-illustration" role="img" aria-label={t("landing.illustrationAlt")}>
+            <div className="field-sun" />
+            <div className="field-topline"><span>UNNATI / {t("landing.fieldLabel")}</span><span>01—04</span></div>
+            <svg className="field-lines" viewBox="0 0 700 530" fill="none" aria-hidden="true">
+              <path className="field-hill hill-back" d="M0 265c96-89 176-111 253-77 63 28 113 20 180-18 92-53 161-47 267 25v335H0V265Z" />
+              <path className="field-hill hill-front" d="M0 331c112-50 190-54 270-8 94 54 158 19 235-24 65-37 119-39 195-5v236H0V331Z" />
+              <path className="field-row" d="M24 507c124-113 222-142 330-136 119 6 214 58 322 132M93 529c115-103 205-129 303-126 110 3 202 49 292 116M200 530c67-51 128-75 197-77 77-3 153 20 226 69" />
+              <path className="field-path" d="M354 530c-18-92 21-143 76-186 40-31 41-69 23-108" />
+              <circle className="field-marker" cx="453" cy="236" r="9" />
+            </svg>
+            <div className="field-legend"><span className="legend-mark" />{t("landing.fieldCaption")}</div>
+          </div>
+        </section>
+
+        <section className="landing-tools" aria-labelledby="tools-title">
+          <div className="tools-heading">
+            <div><p className="landing-eyebrow">{t("landing.toolsEyebrow")}</p><h2 id="tools-title">{t("landing.toolsTitle")}</h2></div>
+            <p>{t("landing.toolsIntro")}</p>
+          </div>
+          <div className="tools-list">
+            {tools.map(({ icon: Icon, title, description }, index) => (
+              <article className="tool-row" key={title}>
+                <span className="tool-index">0{index + 1}</span>
+                <span className="tool-icon"><Icon size={21} strokeWidth={1.6} aria-hidden="true" /></span>
+                <div className="tool-copy"><h3>{title}</h3><p>{description}</p></div>
+                <span className="tool-arrow" aria-hidden="true">↗</span>
+              </article>
             ))}
           </div>
         </section>
+
+        <section className="landing-close">
+          <div><p className="landing-eyebrow">{t("landing.closeEyebrow")}</p><h2>{t("landing.closeTitle")}</h2></div>
+          <Link href="/onboarding"><Button size="lg" className="landing-primary">{t("landing.start")}<ArrowRight size={16} /></Button></Link>
+        </section>
       </main>
+      <footer className="landing-footer"><span>UNNATI</span><p>{t("layout.tagline")}</p><a href="#top">{t("landing.backTop")} ↑</a></footer>
     </div>
   );
 }

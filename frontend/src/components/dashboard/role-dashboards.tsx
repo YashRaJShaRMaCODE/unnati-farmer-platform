@@ -160,6 +160,31 @@ export function FarmerDashboardView() {
         description={t("pages.dashboard.farmerDescription")}
       />
 
+      <section aria-labelledby="farmer-quick-actions">
+        <h2 id="farmer-quick-actions" className="mb-3 text-sm font-semibold uppercase tracking-[0.12em] text-emerald-800">
+          {t("pages.dashboard.quickActions")}
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { href: "/lands", label: t("pages.dashboard.addLandRecord"), icon: Map },
+            { href: "/crops", label: t("pages.dashboard.addCropRecord"), icon: Sprout },
+            { href: "/schemes", label: t("pages.dashboard.findSchemes"), icon: Leaf },
+          ].map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className="group flex min-h-16 items-center gap-3 rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm font-semibold text-emerald-950 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-emerald-50 text-emerald-700 transition-colors group-hover:bg-emerald-100">
+                <Icon className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">{label}</span>
+              <span className="text-emerald-500 transition-transform group-hover:translate-x-0.5" aria-hidden="true">↗</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title={t("pages.dashboard.stats.trustScore")}
