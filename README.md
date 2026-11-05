@@ -117,22 +117,6 @@ Quick checklist:
 
 `farmer` · `buyer` · `government` · `bank` · `admin`
 
-## Demo & Viva
+## Local demo data
 
-```bash
-# Seed demo data for presentations
-cd backend && python manage.py seed_demo_data
-
-# Project readiness check (from repo root)
-python scripts/check_readiness.py
-```
-
-**Demo login (after seed):** `farmer1@unnati.demo` / `Demo@1234`
-
-Warm up the Render backend (~30s) before a live demo on the free tier.
-
-See [AUDIT_REPORT.md](./AUDIT_REPORT.md) and [FEATURES_AUDIT_REPORT.md](./FEATURES_AUDIT_REPORT.md) for full audits.
-
-### Farmer Quick Start
-
-New farmers can register with only **Name, Phone, Village** at `/onboarding` — no Aadhaar required upfront.
+The `seed_demo_data` management command creates synthetic sample records for isolated development or staging databases. Set a unique `UNNATI_DEMO_PASSWORD` in the project `.env` file before running it. Do not seed demo accounts into production. Use `clear_demo_data` when removing sample records.
