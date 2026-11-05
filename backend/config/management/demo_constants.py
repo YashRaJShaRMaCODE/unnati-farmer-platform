@@ -1,5 +1,7 @@
 """Shared constants for UNNATI demo data seeding and cleanup."""
 
+import os
+
 DEMO_EMAIL_DOMAIN = "@unnati.demo"
 DEMO_PASSWORD = os.environ.get("UNNATI_DEMO_PASSWORD", "")
 
