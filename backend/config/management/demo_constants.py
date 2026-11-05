@@ -1,9 +1,9 @@
 """Shared constants for UNNATI demo data seeding and cleanup."""
 
 DEMO_EMAIL_DOMAIN = "@unnati.demo"
-DEMO_PASSWORD = "Demo@1234"
+DEMO_PASSWORD = os.environ.get("UNNATI_DEMO_PASSWORD", "")
 
-# Featured login accounts (documented in DEMO_USERS.md)
+# Featured demonstration accounts
 FEATURED_FARMER_EMAIL = "farmer1@unnati.demo"
 FEATURED_BUYER_EMAIL = "buyer1@unnati.demo"
 GOVERNMENT_EMAIL = "gov@unnati.demo"
