@@ -63,6 +63,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        if not DEMO_PASSWORD:
+            raise CommandError("Set UNNATI_DEMO_PASSWORD before seeding demo data.")
+
         if User.objects.filter(email__endswith=DEMO_EMAIL_DOMAIN).exists() and not options["force"]:
             raise CommandError(
                 "Demo data already exists. Run `python manage.py clear_demo_data` first, "
