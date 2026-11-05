@@ -1,6 +1,6 @@
 # UNNATI – Farmer Trust, Credit & Transparency Platform
 
-Full-stack B.Tech project with Django REST API backend and Next.js 15 frontend.
+A full-stack farmer services platform with a Django REST API and Next.js 15 frontend.
 
 ## Tech Stack
 
