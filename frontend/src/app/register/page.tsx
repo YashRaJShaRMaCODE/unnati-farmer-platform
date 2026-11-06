@@ -12,12 +12,9 @@ import { Input, Label, Select } from "@/components/ui/input";
 import { useTranslation } from "@/providers/language-provider";
 import { UserRole } from "@/types";
 
-const ROLE_KEYS: Record<UserRole, string> = {
+const ROLE_KEYS: Record<Extract<UserRole, "farmer" | "buyer">, string> = {
   farmer: "roles.farmer",
   buyer: "roles.buyer",
-  government: "roles.government",
-  bank: "roles.bank",
-  admin: "roles.admin",
 };
 
 export default function RegisterPage() {
@@ -89,7 +86,7 @@ export default function RegisterPage() {
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value as UserRole })}
               >
-                {(Object.keys(ROLE_KEYS) as UserRole[]).map((role) => (
+                {(Object.keys(ROLE_KEYS) as Array<keyof typeof ROLE_KEYS>).map((role) => (
                   <option key={role} value={role}>
                     {t(ROLE_KEYS[role])}
                   </option>

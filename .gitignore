@@ -1,5 +1,6 @@
 .env
 backend/db.sqlite3
+backend/test.db
 frontend/.next/
 node_modules/
 __pycache__/

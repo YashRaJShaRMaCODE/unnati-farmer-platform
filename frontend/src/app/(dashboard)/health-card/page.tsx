@@ -1,9 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
-import { jsPDF } from "jspdf";
 import { healthCardApi } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import {
@@ -19,7 +19,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { HealthCard } from "@/types";
 import { useTranslation } from "@/providers/language-provider";
 
-function downloadPdf(card: HealthCard) {
+async function downloadPdf(card: HealthCard) {
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
   const margin = 20;
   let y = margin;
@@ -49,6 +50,9 @@ function downloadPdf(card: HealthCard) {
   doc.text(`Profile Completion: ${card.profile_completion}%`, margin, y);
   y += 8;
   doc.text(`Loan Eligible: ${formatCurrency(card.loan_eligible_amount)} (${card.loan_risk} risk)`, margin, y);
+  y += 8;
+  doc.setFontSize(9);
+  doc.text("Guidance only — not a bank decision or government approval.", margin, y);
 
   y += 12;
   doc.text(`Land Records: ${card.land_count} (${card.total_land_area} acres)`, margin, y);
@@ -67,18 +71,22 @@ function downloadPdf(card: HealthCard) {
 
 export default function HealthCardPage() {
   const { t } = useTranslation();
+  const [isDownloading, setIsDownloading] = useState(false);
   const { data: card, isLoading, isError, refetch } = useQuery({
     queryKey: ["health-card"],
     queryFn: async () => (await healthCardApi.get()).data,
   });
 
-  const handleDownload = () => {
-    if (!card) return;
+  const handleDownload = async () => {
+    if (!card || isDownloading) return;
+    setIsDownloading(true);
     try {
-      downloadPdf(card);
+      await downloadPdf(card);
       toast.success("Health card PDF downloaded");
     } catch {
       toast.error("Failed to generate PDF");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -92,9 +100,9 @@ export default function HealthCardPage() {
         title={t("pages.healthCard.title")}
         description={t("pages.healthCard.description")}
         action={
-          <Button onClick={handleDownload} className="gap-2">
+          <Button onClick={handleDownload} className="gap-2" disabled={isDownloading}>
             <Download className="h-4 w-4" />
-            {t("pages.healthCard.downloadPdf")}
+            {t(isDownloading ? "pages.healthCard.generatingPdf" : "pages.healthCard.downloadPdf")}
           </Button>
         }
       />

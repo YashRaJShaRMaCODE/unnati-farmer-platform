@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   ArrowRight,
   Building2,
@@ -21,6 +22,13 @@ const MODULES = [
   { name: "Complaints & Transparency", desc: "Grievance tracking with resolution timeline" },
   { name: "Analytics Dashboards", desc: "Role-based views for farmer, bank, gov, admin" },
 ];
+
+export const metadata: Metadata = {
+  title: "How the platform works",
+  description: "Explore UNNATI's farmer records, marketplace, public scheme, and guidance workflows.",
+  alternates: { canonical: "/project-overview" },
+  openGraph: { title: "How UNNATI works", description: "Explore the farmer services platform and its key workflows." },
+};
 
 export default function ProjectOverviewPage() {
   return (

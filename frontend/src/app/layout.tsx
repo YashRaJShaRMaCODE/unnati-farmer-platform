@@ -17,8 +17,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UNNATI – Farmer Trust, Credit & Transparency",
-  description: "Digital platform for farmer trust scores, credit eligibility, and transparent agriculture services.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://unnati-farmer-platform.vercel.app"),
+  alternates: { canonical: "/" },
+  title: {
+    default: "UNNATI | Clear tools for India's farmers",
+    template: "%s | UNNATI",
+  },
+  description: "A farmer-first workspace for organizing farm records, exploring public schemes, and understanding marketplace and finance tools.",
+  applicationName: "UNNATI",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "UNNATI",
+    title: "UNNATI | Clear tools for India's farmers",
+    description: "Organize farm records and explore farmer services in one clear workspace.",
+  },
 };
 
 export default function RootLayout({
