@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.db import transaction
 from rest_framework import serializers
 
 from farmers.models import Buyer, Farmer
@@ -22,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "is_verified", "created_at", "updated_at"]
+        read_only_fields = ["id", "role", "is_verified", "created_at", "updated_at"]
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -48,10 +49,13 @@ class RegisterSerializer(serializers.ModelSerializer):
                 {"password_confirm": "Passwords do not match."}
             )
         role = attrs.get("role", "farmer")
-        if role not in dict(User.ROLE_CHOICES):
-            raise serializers.ValidationError({"role": "Invalid role."})
+        if role not in {"farmer", "buyer"}:
+            raise serializers.ValidationError(
+                {"role": "Public sign-up is limited to farmer and buyer accounts."}
+            )
         return attrs
 
+    @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("password_confirm")
         password = validated_data.pop("password")
@@ -59,7 +63,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
 
-        if user.role == "buyer":
+        if user.role == "farmer":
+            Farmer.objects.create(user=user)
+        elif user.role == "buyer":
             Buyer.objects.create(user=user)
 
         return user

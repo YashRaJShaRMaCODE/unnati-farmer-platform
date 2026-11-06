@@ -2,6 +2,7 @@
 Integration tests for API routes, JWT auth, dashboards, trust score, and loans.
 """
 from decimal import Decimal
+import json
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -30,6 +31,11 @@ class JWTAuthenticationFlowTestCase(APITestCase):
         self.refresh_url = reverse("token_refresh")
         self.logout_url = reverse("logout")
         self.me_url = reverse("current_user")
+
+    def test_health_check_reports_database_readiness(self):
+        response = self.client.get(reverse("health_check"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), {"status": "ok"})
 
     def test_full_jwt_lifecycle(self):
         payload = {
@@ -65,7 +71,9 @@ class JWTAuthenticationFlowTestCase(APITestCase):
         )
         self.assertEqual(refresh_resp.status_code, status.HTTP_200_OK)
         self.assertIn("access", refresh_resp.data)
-        new_refresh = refresh_resp.data.get("refresh", refresh)
+        self.assertIn("refresh", refresh_resp.data)
+        new_refresh = refresh_resp.data["refresh"]
+        self.assertNotEqual(new_refresh, refresh)
 
         logout = self.client.post(
             self.logout_url, {"refresh": new_refresh}, format="json"

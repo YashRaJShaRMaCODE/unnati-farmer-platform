@@ -1,11 +1,11 @@
 # UNNATI – Farmer Trust, Credit & Transparency Platform
 
-A full-stack farmer services platform with a Django REST API and Next.js 15 frontend.
+A full-stack farmer services platform with a Django REST API and Next.js frontend.
 
 ## Tech Stack
 
 **Backend:** Django 6, DRF, JWT, PostgreSQL, Cloudinary, drf-spectacular  
-**Frontend:** Next.js 15, TypeScript, Tailwind CSS, React Query, Axios, Recharts
+**Frontend:** Next.js, TypeScript, Tailwind CSS, React Query, Axios, Recharts
 
 ## Key Features
 
@@ -77,6 +77,8 @@ python manage.py test
 
 ```bash
 cd frontend
+npm run lint
+npx tsc --noEmit
 npm run build
 ```
 
@@ -91,10 +93,12 @@ npm run build
 **Full step-by-step guide:** [FINAL_DEPLOYMENT_GUIDE.md](./FINAL_DEPLOYMENT_GUIDE.md)
 
 Quick checklist:
-1. Deploy Render Blueprint → run `migrate` + `seed_demo_data` in Render Shell
-2. Deploy Vercel with root directory `frontend` and `NEXT_PUBLIC_API_URL=https://YOUR-BACKEND.onrender.com/api`
-3. Set `CORS_ALLOWED_ORIGINS` on Render to your Vercel URL
-4. Set Cloudinary env vars on Render for file uploads
+1. Deploy the Render Blueprint. It runs migrations before starting; `/healthz/` checks both the app and database.
+2. Deploy Vercel with root directory `frontend`, `NEXT_PUBLIC_API_URL=https://YOUR-BACKEND.onrender.com/api`, and `NEXT_PUBLIC_SITE_URL=https://YOUR-SITE.vercel.app`.
+3. Set `CORS_ALLOWED_ORIGINS` on Render to your Vercel URL.
+4. Set Cloudinary env vars on Render for file uploads. Keep demo data in a separate staging database; never seed demo users into production.
+
+Public registration is limited to farmer and buyer accounts. Government, bank, and admin roles must be assigned through a trusted admin workflow. Farmers receive a private profile at signup; Aadhaar is optional. Trust and eligibility scores are guidance only, not bank decisions or government approvals.
 
 ## API Modules
 

@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -18,6 +19,8 @@ from .tokens import CustomTokenObtainPairSerializer
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth_register"
 
     @extend_schema(tags=["Authentication"])
     def post(self, request, *args, **kwargs):
@@ -26,6 +29,8 @@ class RegisterView(generics.CreateAPIView):
 
 class QuickFarmerRegisterView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth_quick_register"
 
     @extend_schema(tags=["Authentication"])
     def post(self, request):
@@ -45,6 +50,8 @@ class QuickFarmerRegisterView(APIView):
 class LoginView(TokenObtainPairView):
     permission_classes = [AllowAny]
     serializer_class = CustomTokenObtainPairSerializer
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth_login"
 
     @extend_schema(tags=["Authentication"])
     def post(self, request, *args, **kwargs):
