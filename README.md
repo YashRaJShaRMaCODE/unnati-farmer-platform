@@ -2,6 +2,8 @@
 
 A full-stack farmer services platform with a Django REST API and Next.js frontend.
 
+**Live app:** [unnati-farmer-platform.vercel.app](https://unnati-farmer-platform.vercel.app/) · **API health:** [unnati-backend-3zhi.onrender.com/healthz/](https://unnati-backend-3zhi.onrender.com/healthz/)
+
 ## Tech Stack
 
 **Backend:** Django 6, DRF, JWT, PostgreSQL, Cloudinary, drf-spectacular  
