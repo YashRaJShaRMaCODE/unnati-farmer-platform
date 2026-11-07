@@ -10,7 +10,7 @@ from trustscore.models import TrustScore
 
 VERIFICATION_MAX = 20
 TRANSACTION_MAX = 30
-BUYER_RATING_MAX = 20
+SALES_VOLUME_MAX = 20
 GOVERNMENT_MAX = 15
 COMPLAINT_MAX = 15
 
@@ -42,7 +42,7 @@ def calculate_transaction_score(farmer):
     return 6
 
 
-def calculate_buyer_rating_score(farmer):
+def calculate_sales_volume_score(farmer):
     completed_txns = Transaction.objects.filter(
         listing__farmer=farmer,
         status="completed",
@@ -52,7 +52,7 @@ def calculate_buyer_rating_score(farmer):
         return 0
     total_revenue = completed_txns.aggregate(total=Sum("total_amount"))["total"] or Decimal("0")
     if total_revenue >= Decimal("500000"):
-        return BUYER_RATING_MAX
+        return SALES_VOLUME_MAX
     if total_revenue >= Decimal("200000"):
         return 15
     if total_revenue >= Decimal("50000"):
@@ -133,7 +133,7 @@ def recalculate_farmer_trust_score(farmer):
     scores = calculate_trust_score(
         calculate_verification_score(farmer),
         calculate_transaction_score(farmer),
-        calculate_buyer_rating_score(farmer),
+        calculate_sales_volume_score(farmer),
         calculate_government_score(farmer),
         calculate_complaint_score(farmer),
     )

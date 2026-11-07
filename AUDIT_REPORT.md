@@ -178,7 +178,7 @@ frontend/package.json (sonner)
 ## 6. Remaining Recommendations (Future)
 
 1. **E2E tests** with Playwright for critical flows
-2. **Buyer ratings model** — currently `buyer_rating_score` uses revenue proxy
+2. **Score label** — resolved in the current build: the UI now labels the legacy `buyer_rating_score` field as sales volume, which is calculated from completed trade value; the project does not claim to collect buyer reviews.
 3. **Restrict admin role registration** in production
 4. **Pagination UI** for large datasets
 5. **WebSocket notifications** for real-time alerts

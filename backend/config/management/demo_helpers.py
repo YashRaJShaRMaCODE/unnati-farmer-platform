@@ -14,7 +14,7 @@ from marketplace.models import Transaction
 from schemes.models import SchemeApplication
 from trustscore.models import TrustScore
 from trustscore.services import (
-    calculate_buyer_rating_score,
+    calculate_sales_volume_score,
     calculate_complaint_score,
     calculate_government_score,
     calculate_transaction_score,
@@ -51,7 +51,7 @@ def recalculate_trust_score_silent(farmer):
     scores = calculate_trust_score(
         calculate_verification_score(farmer),
         calculate_transaction_score(farmer),
-        calculate_buyer_rating_score(farmer),
+        calculate_sales_volume_score(farmer),
         calculate_government_score(farmer),
         calculate_complaint_score(farmer),
     )
@@ -92,22 +92,15 @@ def create_loan_prediction_silent(farmer):
 
     if trust_score >= 85 and transaction_count >= 5:
         risk_category = "low"
-        recommendation = (
-            "Excellent credit profile. Eligible for priority loan processing "
-            "with favorable interest rates."
-        )
     elif trust_score >= 70:
         risk_category = "medium"
-        recommendation = (
-            "Good credit profile. Standard loan terms recommended with "
-            "collateral verification."
-        )
     else:
         risk_category = "high"
-        recommendation = (
-            "Higher risk profile. Consider micro-finance options, "
-            "cooperative loans, or improving trust score before applying."
-        )
+    recommendation = (
+        "Demo estimate only. This is not a lender's credit assessment, loan approval, "
+        "priority processing, or interest-rate offer. A lender independently assesses "
+        "eligibility and terms."
+    )
 
     return LoanPrediction.objects.create(
         farmer=farmer,

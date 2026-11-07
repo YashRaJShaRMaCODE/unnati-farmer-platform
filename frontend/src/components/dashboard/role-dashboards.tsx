@@ -843,9 +843,9 @@ export function BankDashboardView() {
 
   const trustDistribution = dictToChartData(data.trust_score_distribution);
   const loanRiskData = [
-    { name: "Low Risk", count: data.low_risk_loans },
-    { name: "Medium Risk", count: data.medium_risk_loans },
-    { name: "High Risk", count: data.high_risk_loans },
+    { band: "low", name: t("pages.dashboard.riskCategories.low"), count: data.low_risk_loans },
+    { band: "medium", name: t("pages.dashboard.riskCategories.medium"), count: data.medium_risk_loans },
+    { band: "high", name: t("pages.dashboard.riskCategories.high"), count: data.high_risk_loans },
   ];
 
   return (
@@ -854,6 +854,9 @@ export function BankDashboardView() {
         title={t("pages.dashboard.bankTitle")}
         description={t("pages.dashboard.bankDescription")}
       />
+      <p role="note" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+        {t("pages.loanEligibility.estimateDisclaimer")}
+      </p>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
@@ -932,9 +935,9 @@ export function BankDashboardView() {
                     <Cell
                       key={entry.name}
                       fill={
-                        entry.name === "Low Risk"
+                        entry.band === "low"
                           ? "#059669"
-                          : entry.name === "Medium Risk"
+                          : entry.band === "medium"
                             ? "#f59e0b"
                             : "#ef4444"
                       }

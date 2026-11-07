@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from farmers.models import Farmer
+from loans.models import LoanPrediction
+from loans.serializers import LoanPredictionSerializer
 from loans.services import calculate_loan_eligibility
 from trustscore.models import TrustScore
 
@@ -45,3 +47,22 @@ class LoanEligibilityTestCase(TestCase):
             ["low", "medium", "high"],
         )
         self.assertTrue(prediction.recommendation)
+        self.assertIn("Demo estimate only", prediction.recommendation)
+        self.assertNotIn("favorable interest rates", prediction.recommendation)
+
+    def test_prediction_api_text_never_trusts_legacy_recommendation_copy(self):
+        prediction = LoanPrediction.objects.create(
+            farmer=self.farmer,
+            trust_score=100,
+            land_size=Decimal("1"),
+            revenue=Decimal("0"),
+            transaction_count=0,
+            eligible_amount=Decimal("50000"),
+            risk_category="low",
+            recommendation="Eligible for priority loan processing with favorable interest rates.",
+        )
+
+        text = LoanPredictionSerializer(prediction).data["recommendation"]
+
+        self.assertIn("not a lender's credit assessment", text)
+        self.assertNotIn("favorable interest rates", text)

@@ -96,62 +96,64 @@ FALLBACK_ENTRIES: dict[str, list[FallbackEntry]] = {
                 "ऋण", "loan", "कितना", "मिलेगा",
             ),
             answer_en=(
-                "Loan eligibility on UNNATI depends on trust score, verified land, crop history, and marketplace sales. "
-                "Open Loan Eligibility and run a calculation. Complete your profile and add land/crop data first."
+                "UNNATI's Loan Eligibility page gives a demo estimate from profile and farm data. It is not a bank's "
+                "credit assessment, approval, or offer. A lender independently checks eligibility and terms. "
+                "Use the page to inspect the estimate inputs, then ask your lender for current requirements."
             ),
             answer_hi=(
-                "UNNATI पर ऋण पात्रता विश्वास स्कोर, सत्यापित भूमि, फसल इतिहास और बाज़ार बिक्री पर निर्भर करती है। "
-                "ऋण पात्रता पेज पर गणना चलाएँ। पहले प्रोफ़ाइल पूरी करें और भूमि/फसल जोड़ें।"
+                "UNNATI का ऋण पात्रता पेज प्रोफ़ाइल और खेती के डेटा से डेमो अनुमान देता है। यह बैंक का क्रेडिट "
+                "मूल्यांकन, मंज़ूरी या ऑफ़र नहीं है। पात्रता और शर्तें बैंक/ऋणदाता स्वतंत्र रूप से जाँचते हैं। "
+                "अनुमान के इनपुट देखें और अपने ऋणदाता से मौजूदा ज़रूरतें पूछें।"
             ),
         ),
         FallbackEntry(
             keywords=("document", "दस्तावेज", "कागज", "paper", "aadhaar", "आधार", "kyc", "proof"),
             answer_en=(
-                "Common documents: Aadhaar, land records (survey/khasra), bank passbook, crop details, and income proof. "
-                "Keep land verification updated on UNNATI. Visit your bank with your Health Card PDF."
+                "Document requirements vary by lender and product. Ask the lender for its current checklist and "
+                "share documents only through its official channel. UNNATI's Health Card is a profile summary, "
+                "not proof of loan approval."
             ),
             answer_hi=(
-                "आम दस्तावेज: आधार, भूमि रिकॉर्ड (सर्वे/खसरा), बैंक पासबुक, फसल विवरण और आय प्रमाण। "
-                "UNNATI पर भूमि सत्यापन अपडेट रखें। हेल्थ कार्ड PDF के साथ नज़दीकी बैंक/shakari bank जाएँ।"
+                "दस्तावेज़ों की ज़रूरत बैंक और ऋण योजना के अनुसार बदलती है। बैंक से मौजूदा सूची पूछें और "
+                "दस्तावेज़ केवल उसके आधिकारिक माध्यम से साझा करें। UNNATI हेल्थ कार्ड प्रोफ़ाइल सारांश है, "
+                "ऋण मंज़ूरी का प्रमाण नहीं।"
             ),
         ),
         FallbackEntry(
             keywords=("kcc", "kisan credit", "credit card", "किसान क्रेडिट"),
             answer_en=(
-                "Kisan Credit Card (KCC) gives flexible credit for crops and farm needs. "
-                "You usually need land proof and basic credit check. "
-                "A strong UNNATI trust score and verified records help your application."
+                "KCC eligibility, limits, and terms depend on current RBI directions and the issuing lender's "
+                "assessment. Check the RBI directions at https://rbi.org.in/scripts/BS_ViewMasterDirections.aspx?did=343 "
+                "and confirm the current checklist with your bank. UNNATI's demo score does not affect eligibility."
             ),
             answer_hi=(
-                "किसान क्रेडिट कार्ड (KCC) से फसल और खेती खर्च के लिए लचीला ऋण मिलता है। "
-                "आमतौर पर भूमि प्रमाण और बुनियादी क्रेडिट जाँच ज़रूरी होती है। "
-                "UNNATI में अच्छा विश्वास स्कोर और सत्यापित रिकॉर्ड आवेदन में मदद करते हैं।"
+                "KCC की पात्रता, सीमा और शर्तें मौजूदा RBI निर्देशों तथा जारीकर्ता बैंक के मूल्यांकन पर निर्भर करती हैं। "
+                "RBI निर्देश यहाँ देखें: https://rbi.org.in/scripts/BS_ViewMasterDirections.aspx?did=343 "
+                "और मौजूदा दस्तावेज़ सूची बैंक से पूछें। UNNATI का डेमो स्कोर पात्रता तय नहीं करता।"
             ),
         ),
         FallbackEntry(
             keywords=("trust score", "विश्वास", "स्कोर", "improve loan", "risk", "जोखिम"),
             answer_en=(
-                "Higher trust scores often mean better loan terms. Improve by: verifying profile, "
-                "adding land/crop records, completing marketplace sales, applying to schemes, "
-                "and resolving complaints. See the Trust Score page for details."
+                "The UNNATI trust score is a demo indicator and does not predict loan terms or approval. "
+                "Its inputs include profile verification, land/crop records, completed sales, scheme applications, "
+                "and complaint outcomes. See the Trust Score page for the breakdown."
             ),
             answer_hi=(
-                "ऊँचा विश्वास स्कोर अक्सर बेहतर ऋण शर्तें दिलाता है। सुधार के लिए: प्रोफ़ाइल सत्यापित करें, "
-                "भूमि/फसल जोड़ें, बाज़ार में बिक्री पूरी करें, योजनाओं में आवेदन करें, "
-                "और शिकायतें जल्दी सुलझाएँ। विवरण के लिए विश्वास स्कोर पेज देखें।"
+                "UNNATI का विश्वास स्कोर डेमो संकेतक है; यह ऋण की शर्तों या मंज़ूरी का अनुमान नहीं देता। "
+                "इसमें प्रोफ़ाइल सत्यापन, भूमि/फसल रिकॉर्ड, पूरी हुई बिक्री, योजना आवेदन और शिकायत के नतीजे "
+                "शामिल हैं। विवरण के लिए विश्वास स्कोर पेज देखें।"
             ),
         ),
         FallbackEntry(
             keywords=("interest", "ब्याज", "rate", "repay", "emi", "किस्त"),
             answer_en=(
-                "Interest rates vary by bank and loan type. Agricultural priority loans often have lower rates. "
-                "Compare KCC, crop loans, and term loans. "
-                "Keep transaction history on UNNATI to show repayment ability."
+                "Rates, fees, and repayment terms vary by lender and product. Ask lenders for current terms and "
+                "a written repayment schedule, then compare the total cost. UNNATI does not predict an offered rate."
             ),
             answer_hi=(
-                "ब्याज दर बैंक और ऋण प्रकार पर अलग होती है। कृषि प्राथमिकता ऋण में अक्सर कम ब्याज मिलता है। "
-                "KCC, फसल ऋण और अवधि ऋण की तुलना करें। "
-                "चुकौती क्षमता दिखाने के लिए UNNATI में लेनदेन इतिहास रखें।"
+                "ब्याज, शुल्क और भुगतान की शर्तें बैंक तथा ऋण उत्पाद के अनुसार अलग होती हैं। बैंकों से मौजूदा "
+                "शर्तें और लिखित भुगतान-तालिका माँगें, फिर कुल लागत की तुलना करें। UNNATI ब्याज दर का अनुमान नहीं देता।"
             ),
         ),
     ],
@@ -160,13 +162,12 @@ FALLBACK_ENTRIES: dict[str, list[FallbackEntry]] = {
             keywords=("pm-kisan", "pm kisan", "kisan samman", "6000", "installment", "पीएम किसान"),
             answer_en=(
                 "PM-KISAN gives income support to eligible farmer families. "
-                "Link land records and bank account with Aadhaar correctly. "
-                "Apply and track from the UNNATI Schemes page or official PM-KISAN portal."
+                "Check current eligibility and status on the official portal: https://pmkisan.gov.in/. "
+                "UNNATI does not determine government eligibility."
             ),
             answer_hi=(
-                "पीएम-किसान योग्य किसान परिवारों को आय सहायता देता है। "
-                "भूमि रिकॉर्ड और बैंक खाता आधार से सही जोड़ें। "
-                "UNNATI योजनाएँ पेज या आधिकारिक पोर्टल से आवेदन और स्थिति देखें।"
+                "पीएम-किसान पात्र किसान परिवारों को सहायता देता है। मौजूदा पात्रता और स्थिति आधिकारिक पोर्टल "
+                "https://pmkisan.gov.in/ पर जाँचें। UNNATI सरकारी पात्रता तय नहीं करता।"
             ),
         ),
         FallbackEntry(
@@ -244,50 +245,52 @@ FALLBACK_ENTRIES: dict[str, list[FallbackEntry]] = {
         FallbackEntry(
             keywords=("what is", "क्या है", "meaning", "explain", "how works", "समझाए", "क्या होता"),
             answer_en=(
-                "Your UNNATI trust score (0–100) reflects verification, transactions, "
-                "buyer ratings, scheme use, and complaint resolution. "
-                "Higher scores build trust for loans, schemes, and marketplace. See the Trust Score page."
+                "Your UNNATI demo trust score (0–100) reflects profile verification, completed sales "
+                "count and value, scheme applications, and complaint resolution. It does not measure "
+                "buyer satisfaction or decide loan approval or scheme eligibility; lenders and agencies "
+                "make independent decisions. See the Trust Score page for the score breakdown."
             ),
             answer_hi=(
-                "UNNATI विश्वास स्कोर (0–100) सत्यापन, लेनदेन, खरीदार रेटिंग, "
-                "योजना भागीदारी और शिकायत समाधान दर्शाता है। "
-                "ऊँचा स्कोर ऋण, योजना और बाज़ार में विश्वास बढ़ाता है। विश्वास स्कोर पेज देखें।"
+                "UNNATI का डेमो विश्वास स्कोर (0–100) प्रोफ़ाइल सत्यापन, पूरी हुई बिक्री की संख्या और "
+                "राशि, योजना आवेदन और शिकायत समाधान दिखाता है। यह खरीदार की संतुष्टि नहीं मापता और "
+                "ऋण या योजना की पात्रता तय नहीं करता; बैंक और संबंधित संस्थाएँ अपने निर्णय खुद लेती हैं। "
+                "विवरण के लिए विश्वास स्कोर पेज देखें।"
             ),
         ),
         FallbackEntry(
             keywords=("verification", "सत्यापन", "verify", "aadhaar", "आधार", "document", "दस्तावेज"),
             answer_en=(
-                "Verification adds up to 30 points. Upload land ownership papers, complete Aadhaar, "
-                "and keep profile accurate. Verified farmers get faster scheme approvals "
-                "and better marketplace visibility."
+                "Profile and land record checks can add up to 20 points in this demo score. Keep "
+                "records accurate and share documents only when needed. A verified profile does not "
+                "guarantee scheme approval, a loan, or marketplace visibility."
             ),
             answer_hi=(
-                "सत्यापन से अधिकतम 30 अंक मिल सकते हैं। भूमि स्वामित्व कागज़ अपलोड करें, आधार पूरा करें, "
-                "और प्रोफ़ाइल सही रखें। सत्यापित किसानों को योजना स्वीकृति में और बाज़ार में फायदा मिलता है।"
+                "इस डेमो स्कोर में प्रोफ़ाइल और भूमि रिकॉर्ड सत्यापन से अधिकतम 20 अंक मिल सकते हैं। रिकॉर्ड "
+                "सही रखें और दस्तावेज़ ज़रूरत पर ही साझा करें। सत्यापन से योजना, ऋण या बाज़ार में जगह की "
+                "मंज़ूरी की गारंटी नहीं मिलती।"
             ),
         ),
         FallbackEntry(
             keywords=("transaction", "लेनदेन", "marketplace", "sell", "buy", "sale", "बिक्री", "बाज़ार"),
             answer_en=(
-                "Marketplace transactions build your transaction score. List produce honestly, "
-                "deliver on time, and complete sales through UNNATI. "
-                "Regular sales show banks and buyers you are reliable."
+                "Completed marketplace transactions affect this demo score. Keep transaction details accurate; "
+                "the score does not measure buyer satisfaction or establish creditworthiness."
             ),
             answer_hi=(
-                "बाज़ार लेनदेन से लेनदेन स्कोर बनता है। ईमानदारी से सूची बनाएँ, "
-                "समय पर डिलीवरी करें, UNNATI के ज़रिए बिक्री पूरी करें। "
-                "नियमित बिक्री से बैंक और खरीदार आप पर भरोसा करते हैं।"
+                "पूरे हुए बाज़ार लेनदेन इस डेमो स्कोर को प्रभावित करते हैं। लेनदेन का विवरण सही रखें; "
+                "यह स्कोर खरीदार की संतुष्टि या ऋण-योग्यता नहीं मापता।"
             ),
         ),
         FallbackEntry(
             keywords=("complaint", "शिकायत", "dispute", "विवाद", "negative", "decrease", "drop", "कम"),
             answer_en=(
-                "Unresolved complaints can lower your score. Respond quickly, share evidence, "
-                "and work toward resolution. A clean record helps with buyers, banks, and government."
+                "Complaint outcomes affect this demo score. Share accurate information and use the "
+                "platform's review process if a record is incorrect. This score does not guarantee a lender "
+                "or government decision."
             ),
             answer_hi=(
-                "अनसुलझी शिकायतें स्कोर घटा सकती हैं। जल्दी जवाब दें, साक्ष्य दें, "
-                "और समाधान की दिशा में काम करें। साफ रिकॉर्ड खरीदार, बैंक और सरकार के लिए अच्छा है।"
+                "शिकायत के नतीजे इस डेमो स्कोर को प्रभावित करते हैं। सही जानकारी दें और रिकॉर्ड गलत हो तो "
+                "प्लेटफ़ॉर्म की समीक्षा प्रक्रिया अपनाएँ। यह स्कोर बैंक या सरकारी निर्णय की गारंटी नहीं देता।"
             ),
         ),
     ],
@@ -308,14 +311,14 @@ DEFAULT_ANSWERS: dict[str, dict[str, str]] = {
     },
     "loan": {
         "en": (
-            "For loan help: complete profile, add land and crops, then use Loan Eligibility. "
-            "Keep Aadhaar, land proof, and bank details ready. "
-            "Try asking about eligibility, documents, or KCC."
+            "For a demo estimate, add profile, land, and crop records, then open Loan Eligibility. "
+            "For an actual loan, ask your lender for its current checklist, assessment, and written terms. "
+            "Try asking about documents or KCC."
         ),
         "hi": (
-            "ऋण सहायता: प्रोफ़ाइल पूरी करें, भूमि/फसल जोड़ें, फिर ऋण पात्रता गणना चलाएँ। "
-            "आधार, भूमि प्रमाण और बैंक विवरण तैयार रखें। "
-            "पात्रता, दस्तावेज़ या KCC के बारे में पूछें।"
+            "डेमो अनुमान के लिए प्रोफ़ाइल, भूमि और फसल रिकॉर्ड जोड़कर ऋण अनुमान पेज खोलें। "
+            "वास्तविक ऋण के लिए बैंक से मौजूदा सूची, मूल्यांकन और लिखित शर्तें पूछें। "
+            "दस्तावेज़ या KCC के बारे में पूछें।"
         ),
     },
     "scheme": {
@@ -346,14 +349,14 @@ DEFAULT_ANSWERS: dict[str, dict[str, str]] = {
 
 FALLBACK_TIPS: dict[str, list[str]] = {
     "en": [
-        "Complete your farmer profile to improve trust score.",
-        "Record land and crop data for better loan eligibility.",
+        "Complete your farmer profile to keep the demo score inputs accurate.",
+        "Record land and crop data for a clearer demo estimate; lender rules vary.",
         "Apply to active government schemes from the Schemes page.",
         "Complete marketplace transactions to build transaction history.",
     ],
     "hi": [
-        "विश्वास स्कोर बढ़ाने के लिए किसान प्रोफ़ाइल पूरी करें।",
-        "बेहतर ऋण पात्रता के लिए भूमि और फसल का डेटा दर्ज करें।",
+        "डेमो स्कोर के इनपुट सही रखने के लिए किसान प्रोफ़ाइल पूरी करें।",
+        "डेमो अनुमान के लिए भूमि और फसल का डेटा दर्ज करें; बैंक के नियम अलग हो सकते हैं।",
         "योजनाएँ पेज से सक्रिय सरकारी योजनाओं में आवेदन करें।",
         "लेनदेन इतिहास बनाने के लिए बाज़ार में लेनदेन पूरे करें।",
     ],

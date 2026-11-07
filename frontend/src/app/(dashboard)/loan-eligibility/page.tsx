@@ -103,7 +103,7 @@ export default function LoanEligibilityPage() {
     mutationFn: () => loansApi.calculate(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["loans"] });
-      toast.success("Loan eligibility calculated");
+      toast.success(t("pages.loanEligibility.calculated"));
     },
     onError: (err) => toast.error(getApiErrorMessage(err, "Failed to calculate eligibility")),
   });
@@ -142,6 +142,9 @@ export default function LoanEligibilityPage() {
           ) : undefined
         }
       />
+      <p role="note" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+        {t("pages.loanEligibility.estimateDisclaimer")}
+      </p>
 
       {!latest ? (
         <EmptyState
@@ -196,7 +199,9 @@ export default function LoanEligibilityPage() {
               </div>
               <div className="flex justify-between text-xs text-emerald-600">
                 <span>{t("pages.loanEligibility.lowRisk")}</span>
-                <span className="font-medium capitalize">{latest.risk_category} Risk</span>
+                <span className="font-medium capitalize">
+                  {t("pages.loanEligibility.estimateBand", { band: latest.risk_category })}
+                </span>
                 <span>{t("pages.loanEligibility.highRisk")}</span>
               </div>
             </CardContent>
@@ -207,7 +212,9 @@ export default function LoanEligibilityPage() {
               <CardTitle className="text-base">{t("pages.loanEligibility.recommendation")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-emerald-800">{latest.recommendation}</p>
+              <p className="text-emerald-800">
+                {t(`pages.dashboard.loanRecommendations.${latest.risk_category}`)}
+              </p>
               <div className="mt-4 grid gap-4 sm:grid-cols-3 text-sm">
                 <div>
                   <span className="text-emerald-600">{t("pages.loanEligibility.landSize")}</span>{" "}

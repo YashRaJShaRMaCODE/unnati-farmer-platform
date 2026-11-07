@@ -45,22 +45,15 @@ def calculate_loan_eligibility(farmer):
 
     if trust_score >= 85 and transaction_count >= 5:
         risk_category = "low"
-        recommendation = (
-            "Excellent credit profile. Eligible for priority loan processing "
-            "with favorable interest rates."
-        )
     elif trust_score >= 70:
         risk_category = "medium"
-        recommendation = (
-            "Good credit profile. Standard loan terms recommended with "
-            "collateral verification."
-        )
     else:
         risk_category = "high"
-        recommendation = (
-            "Higher risk profile. Consider micro-finance options, "
-            "cooperative loans, or improving trust score before applying."
-        )
+    recommendation = (
+        "Demo estimate only. This is not a lender's credit assessment, loan approval, "
+        "priority processing, or interest-rate offer. A lender independently assesses "
+        "eligibility and terms."
+    )
 
     prediction = LoanPrediction.objects.create(
         farmer=farmer,
@@ -78,7 +71,7 @@ def calculate_loan_eligibility(farmer):
     create_notification(
         user=farmer.user,
         title="Loan Eligibility Calculated",
-        message=f"Eligible amount: ₹{eligible_amount:,.2f} ({risk_category} risk).",
+        message=f"Demo loan estimate: ₹{eligible_amount:,.2f}; not a lender decision or offer.",
         notification_type="loan",
         link="/loan-eligibility",
     )

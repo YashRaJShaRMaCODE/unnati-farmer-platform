@@ -165,7 +165,7 @@ export default function ProjectOverviewPage() {
               <ul className="space-y-1">
                 <li>Verification (V): max 20 — Aadhaar, profile verification</li>
                 <li>Transactions (T): max 30 — completed marketplace sales</li>
-                <li>Buyer Rating (B): max 20 — revenue from completed trades</li>
+                <li>Sales Volume (B): max 20 — value of completed trades</li>
                 <li>Government (G): max 15 — scheme application approval ratio</li>
                 <li>Complaints (C): max 15 — resolution track record</li>
               </ul>

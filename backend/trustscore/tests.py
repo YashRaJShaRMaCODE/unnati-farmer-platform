@@ -1,10 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from farmers.models import Farmer
+from crops.models import CropRecord
+from farmers.models import Buyer, Farmer
+from marketplace.models import Listing, Transaction
 from trustscore.models import TrustScore
 from trustscore.services import (
     calculate_complaint_score,
+    calculate_sales_volume_score,
     calculate_trust_score,
     calculate_verification_score,
     recalculate_farmer_trust_score,
@@ -48,3 +51,28 @@ class TrustScoreServiceTestCase(TestCase):
     def test_complaint_score_no_complaints(self):
         score = calculate_complaint_score(self.farmer)
         self.assertEqual(score, 15)
+
+    def test_sales_volume_score_uses_only_completed_trade_value(self):
+        buyer_user = User.objects.create_user(
+            email="buyer@test.com", username="buyer", password="SecurePass123!", role="buyer"
+        )
+        buyer = Buyer.objects.create(user=buyer_user)
+        crop = CropRecord.objects.create(
+            farmer=self.farmer,
+            crop_name="Rice",
+            season="kharif",
+            area_used="1.00",
+            yield_amount="100.00",
+            harvest_date="2026-10-01",
+        )
+        listing = Listing.objects.create(
+            farmer=self.farmer, crop=crop, quantity="100.00", price_per_unit="1000.00"
+        )
+        Transaction.objects.create(
+            listing=listing, buyer=buyer, quantity="200.00", total_amount="200000.00", status="completed"
+        )
+        Transaction.objects.create(
+            listing=listing, buyer=buyer, quantity="500.00", total_amount="500000.00", status="cancelled"
+        )
+
+        self.assertEqual(calculate_sales_volume_score(self.farmer), 15)

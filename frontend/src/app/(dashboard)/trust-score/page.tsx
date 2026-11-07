@@ -37,7 +37,7 @@ import { useTranslation } from "@/providers/language-provider";
 const BREAKDOWN_MAX: Record<string, number> = {
   Verification: 20,
   Transactions: 30,
-  "Buyer Rating": 20,
+  "Sales Volume": 20,
   Government: 15,
   Complaints: 15,
 };
@@ -91,7 +91,7 @@ function buildBreakdown(score: TrustScore) {
   return [
     { name: "Verification", labelKey: "pages.trustScore.verification", score: score.verification_score, max: 20 },
     { name: "Transactions", labelKey: "pages.trustScore.transactions", score: score.transaction_score, max: 30 },
-    { name: "Buyer Rating", labelKey: "pages.trustScore.buyerRating", score: score.buyer_rating_score, max: 20 },
+    { name: "Sales Volume", labelKey: "pages.trustScore.buyerRating", score: score.buyer_rating_score, max: 20 },
     { name: "Government", labelKey: "pages.trustScore.government", score: score.government_score, max: 15 },
     { name: "Complaints", labelKey: "pages.trustScore.complaints", score: score.complaint_score, max: 15 },
   ];

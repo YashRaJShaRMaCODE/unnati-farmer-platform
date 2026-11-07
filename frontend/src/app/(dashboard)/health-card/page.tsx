@@ -49,10 +49,10 @@ async function downloadPdf(card: HealthCard) {
   y += 8;
   doc.text(`Profile Completion: ${card.profile_completion}%`, margin, y);
   y += 8;
-  doc.text(`Loan Eligible: ${formatCurrency(card.loan_eligible_amount)} (${card.loan_risk} risk)`, margin, y);
+  doc.text(`Demo loan estimate: ${formatCurrency(card.loan_eligible_amount)} (${card.loan_risk} demo band)`, margin, y);
   y += 8;
   doc.setFontSize(9);
-  doc.text("Guidance only — not a bank decision or government approval.", margin, y);
+  doc.text("Demo output only — not a credit assessment, eligibility decision, or loan offer.", margin, y);
 
   y += 12;
   doc.text(`Land Records: ${card.land_count} (${card.total_land_area} acres)`, margin, y);
@@ -106,6 +106,9 @@ export default function HealthCardPage() {
           </Button>
         }
       />
+      <p role="note" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+        {t("pages.healthCard.loanEstimateNotice")}
+      </p>
 
       <Card
         className="overflow-hidden border-2 border-emerald-200 shadow-xl hover-lift"
