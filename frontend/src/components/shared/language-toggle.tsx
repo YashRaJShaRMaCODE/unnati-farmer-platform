@@ -21,6 +21,8 @@ export function LanguageToggle({ className }: { className?: string }) {
         type="button"
         variant="ghost"
         size="sm"
+        aria-label="English"
+        aria-pressed={locale === "en"}
         onClick={() => setLocale("en")}
         className={cn(
           "h-8 min-w-[2.5rem] rounded-md px-2 text-xs font-semibold",
@@ -35,6 +37,8 @@ export function LanguageToggle({ className }: { className?: string }) {
         type="button"
         variant="ghost"
         size="sm"
+        aria-label="हिंदी"
+        aria-pressed={locale === "hi"}
         onClick={() => setLocale("hi")}
         className={cn(
           "h-8 min-w-[2.5rem] rounded-md px-2 text-xs font-semibold",
