@@ -14,6 +14,7 @@ A full-stack farmer services platform with a Django REST API and Next.js fronten
 - Role-based dashboards (`farmer`, `buyer`, `government`, `bank`, `admin`)
 - Trust score, loan eligibility, schemes, marketplace, complaints, health card
 - **Hindi / English UI toggle** (top-right header)
+- Persistent language choice also updates the document language for assistive technology.
 - **AI Assistant** with farming, loan, scheme, and trust-score contexts
   - Live answers via Gemini when `GEMINI_API_KEY` is configured
   - **Guided fallback Q&A** (Hindi + English) when AI is unavailable — no API key required for demos
