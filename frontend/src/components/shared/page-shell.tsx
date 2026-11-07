@@ -64,9 +64,9 @@ export function EmptyState({
       <h3 className="text-lg font-semibold text-emerald-950">{title}</h3>
       <p className="mt-2 max-w-md text-sm text-emerald-700">{description}</p>
       {actionLabel && href && (
-        <Link href={href} className="mt-4">
-          <Button>{actionLabel}</Button>
-        </Link>
+        <Button asChild className="mt-4">
+          <Link href={href}>{actionLabel}</Link>
+        </Button>
       )}
       {actionLabel && onAction && (
         <Button className="mt-4" onClick={onAction}>

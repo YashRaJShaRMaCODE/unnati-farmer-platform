@@ -45,14 +45,14 @@ export default function ProjectOverviewPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Link href="/onboarding">
-              <Button variant="outline" size="sm">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/onboarding">
                 Quick Start
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button size="sm">Login</Button>
-            </Link>
+              </Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/login">Login</Link>
+            </Button>
           </div>
         </div>
       </header>
@@ -276,11 +276,11 @@ export default function ProjectOverviewPage() {
             <li>Login as bank/government/admin for analytics dashboards</li>
             <li>Try AI Assistant and voice input on form fields</li>
           </ol>
-          <Link href="/login" className="mt-6 inline-block">
-            <Button className="bg-white text-emerald-700 hover:bg-emerald-50">
+          <Button asChild className="mt-6 bg-white text-emerald-700 hover:bg-emerald-50">
+            <Link href="/login">
               Start Demo <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </section>
       </main>
     </div>

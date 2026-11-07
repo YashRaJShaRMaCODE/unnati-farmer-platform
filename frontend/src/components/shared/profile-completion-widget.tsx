@@ -86,12 +86,12 @@ export function ProfileCompletionWidget({
         )}
 
         {data.percent < 100 && (
-          <Link href={href}>
-            <Button variant="outline" className="w-full gap-2">
+          <Button asChild variant="outline" className="w-full gap-2">
+            <Link href={href}>
               {t("pages.dashboard.nextStep", { step: nextStepLabel })}
               <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         )}
       </CardContent>
     </Card>

@@ -25,7 +25,7 @@ export default function HomePage() {
         <div className="landing-header-actions">
           <LanguageToggle />
           <Link className="landing-login" href="/login">{t("landing.login")}</Link>
-          <Link href="/register"><Button className="landing-signup">{t("landing.register")}</Button></Link>
+          <Button asChild className="landing-signup"><Link href="/register">{t("landing.register")}</Link></Button>
         </div>
       </header>
 
@@ -36,7 +36,7 @@ export default function HomePage() {
             <h1 id="landing-title">{t("landing.headline")} <em>{t("landing.headlineAccent")}</em></h1>
             <p className="landing-lede">{t("landing.intro")}</p>
             <div className="landing-actions">
-              <Link href="/onboarding"><Button size="lg" className="landing-primary">{t("landing.start")}<ArrowRight size={16} /></Button></Link>
+              <Button asChild size="lg" className="landing-primary"><Link href="/onboarding">{t("landing.start")}<ArrowRight size={16} /></Link></Button>
               <Link className="landing-secondary" href="/register">{t("landing.createAccount")}<span aria-hidden="true">↗</span></Link>
             </div>
             <p className="landing-note"><ShieldCheck size={15} aria-hidden="true" />{t("landing.note")}</p>
@@ -75,7 +75,7 @@ export default function HomePage() {
 
         <section className="landing-close">
           <div><p className="landing-eyebrow">{t("landing.closeEyebrow")}</p><h2>{t("landing.closeTitle")}</h2></div>
-          <Link href="/onboarding"><Button size="lg" className="landing-primary">{t("landing.start")}<ArrowRight size={16} /></Button></Link>
+          <Button asChild size="lg" className="landing-primary"><Link href="/onboarding">{t("landing.start")}<ArrowRight size={16} /></Link></Button>
         </section>
       </main>
       <footer className="landing-footer"><span>UNNATI</span><p>{t("layout.tagline")}</p><a href="#top">{t("landing.backTop")} ↑</a></footer>
