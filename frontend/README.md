@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UNNATI web app
 
-## Getting Started
+Farmer-first frontend for UNNATI’s records, public schemes, marketplace, finance guidance, and support tools. Built with Next.js App Router, TypeScript, Tailwind CSS, and React Query.
 
-First, run the development server:
+**Live app:** [unnati-farmer-platform.vercel.app](https://unnati-farmer-platform.vercel.app/)
+
+## Run locally
+
+From this directory:
+
+```bash
+npm ci
+```
+
+Copy `.env.local.example` to `.env.local` and set the API and canonical site URLs:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+Start the Django API from `../backend`, then run:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
 
-## Learn More
+## Deploy
 
-To learn more about Next.js, take a look at the following resources:
+Vercel uses this directory as the project root. Set `NEXT_PUBLIC_API_URL` to the deployed Django API’s `/api` endpoint and `NEXT_PUBLIC_SITE_URL` to the public frontend URL. The backend must allow that frontend origin in `CORS_ALLOWED_ORIGINS`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The app adds global `nosniff`, frame denial, referrer policy, and browser permissions headers. Vercel provides HSTS for the deployed domain.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For full-stack setup and API details, see the [project README](../README.md) and [deployment guide](../FINAL_DEPLOYMENT_GUIDE.md).

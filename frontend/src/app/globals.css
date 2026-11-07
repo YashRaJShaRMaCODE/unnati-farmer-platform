@@ -88,3 +88,16 @@ body {
     transition-duration: .01ms !important;
   }
 }
+
+@media (max-width: 360px) {
+  .landing-header {
+    min-height: 0;
+    flex-wrap: wrap;
+    padding-block: 12px;
+  }
+
+  .landing-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
