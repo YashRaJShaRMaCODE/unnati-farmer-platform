@@ -24,7 +24,7 @@ import {
   User,
   VillageAnalytics,
 } from "@/types";
-import { apiClient, authApiClient, clearTokens, setStoredUser, setTokens } from "./client";
+import { apiClient, authApiClient, clearTokens, getRefreshToken, setStoredUser, setTokens } from "./client";
 
 export type ListParams = Record<string, string | undefined>;
 
@@ -53,7 +53,7 @@ export const authApi = {
     return data;
   },
   logout: async () => {
-    const refresh = localStorage.getItem("refresh_token");
+    const refresh = getRefreshToken();
     try {
       if (refresh) await authApiClient.post("/logout/", { refresh });
     } finally {

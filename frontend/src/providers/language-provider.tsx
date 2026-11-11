@@ -11,6 +11,7 @@ import {
 import { translate, type Locale } from "@/lib/i18n";
 
 const STORAGE_KEY = "unnati_locale";
+let memoryLocale: Locale = "en";
 
 interface LanguageContextValue {
   locale: Locale;
@@ -23,8 +24,13 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 function readStoredLocale(): Locale {
   if (typeof window === "undefined") return "en";
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === "hi" ? "hi" : "en";
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    memoryLocale = stored === "hi" ? "hi" : "en";
+  } catch {
+    // Keep language switching available when browser storage is disabled.
+  }
+  return memoryLocale;
 }
 
 function getServerLocale(): Locale {
@@ -48,7 +54,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [locale]);
 
   const setLocale = useCallback((next: Locale) => {
-    localStorage.setItem(STORAGE_KEY, next);
+    memoryLocale = next;
+    try {
+      localStorage.setItem(STORAGE_KEY, next);
+    } catch {
+      // The in-memory choice still applies for this page session.
+    }
     window.dispatchEvent(new Event("unnati-locale-change"));
   }, []);
 

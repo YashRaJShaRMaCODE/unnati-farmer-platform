@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
-import { getStoredUser } from "@/lib/api/client";
+import { getAccessToken, getStoredUser } from "@/lib/api/client";
 import { User } from "@/types";
 
 interface AuthContextType {
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     window.addEventListener("auth:expired", handleAuthExpired);
     const initialize = async () => {
-      if (localStorage.getItem("access_token")) await refreshUser();
+      if (getAccessToken()) await refreshUser();
       setLoading(false);
     };
     void initialize();
