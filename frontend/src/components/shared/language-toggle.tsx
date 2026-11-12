@@ -49,6 +49,9 @@ export function LanguageToggle({ className }: { className?: string }) {
       >
         हिं
       </Button>
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {locale === "hi" ? "भाषा हिंदी में बदल गई।" : "Language changed to English."}
+      </span>
       <Languages className="hidden h-4 w-4 text-emerald-600 sm:block" aria-hidden />
     </div>
   );
